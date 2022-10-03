@@ -8,7 +8,11 @@ end;
 
 type BlockList = Array [0..6] of Block;
 
+// Charge tous les blocs à partir du fichier blocks.txt
 function load_blocks(): BlockList;
+
+// Fait tourner le bloc.
+procedure rotate_block(var Block; direction: Boolean { True si sens horaire, False si trigonométrique });
 
 implementation
 
@@ -37,5 +41,8 @@ begin
         end;
     end;
 end;
+
+procedure rotate_block(var Block; direction: Boolean { True si sens horaire, False si trigonométrique });
+begin end;
 
 end.

@@ -1,8 +1,9 @@
 
 unit grids;
+{$MODE OBJFPC}
 
 interface
-uses blocks;
+uses blocks, sysutils;
 
 type Grid = record
     tiles: Array [0..9, 0..23] of Byte;
@@ -15,6 +16,8 @@ function test_collision(
     x, y: Integer           // Position of the falling block
 ): Boolean;
 
+procedure test_collision_test();
+
 implementation
 
 function test_collision(
@@ -23,5 +26,10 @@ function test_collision(
     x, y: Integer           // Position of the falling block
 ): Boolean;
 begin end;
+
+procedure test_collision_test();
+begin
+raise Exception.Create('Helpful description of what went wrong');
+end;
 
 end.

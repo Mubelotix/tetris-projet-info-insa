@@ -10,9 +10,10 @@ jobs:
         run: sudo apt install fpc
       - name: debug info
         run: |
-          pwd
+          ls ..
           ls .
+          cat tests.pas
       - name: Build
-        run: fpc ./tests.pas
+        run: fpc tests.pas
       - name: Run tests
         run: ./tests

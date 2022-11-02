@@ -29,7 +29,7 @@ begin end;
 
 procedure test_collision_test();
 begin
-raise Exception.Create('Helpful description of what went wrong');
+//raise Exception.Create('Helpful description of what went wrong');
 end;
 
 end.

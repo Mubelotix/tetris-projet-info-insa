@@ -15,7 +15,8 @@ function load_blocks(): BlockList;
 procedure test_load_blocks();
 
 // Fait tourner le bloc.
-procedure rotate_block(var Block; direction: Boolean { True si sens horaire, False si trigonométrique });
+procedure rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique });
+procedure test_rotate_block();
 
 implementation
 
@@ -55,7 +56,77 @@ begin
     end;
 end;
 
-procedure rotate_block(var Block; direction: Boolean { True si sens horaire, False si trigonométrique });
-begin end;
+procedure rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique });
+var new_b: Block;
+var x, y: Integer;
+begin
+    if direction then begin
+        for y := 0 to 3 do
+            for x := 0 to 3 do
+                new_b.tiles[x][y] := b.tiles[y][3-x];
+    end else begin
+        for y := 0 to 3 do
+            for x := 0 to 3 do
+                new_b.tiles[x][y] := b.tiles[3-y][x];
+    end;
+    b := new_b;
+end;
+
+procedure test_rotate_block();
+var b: Block;
+var i: Integer;
+begin
+    // Simple rotation:
+    // 
+    // 0123      c840
+    // 4567      d951 
+    // 89ab  --> ea62
+    // cdef      fb73
+
+    b.tiles[0][0] := 0; b.tiles[1][0] := 1; b.tiles[2][0] := 2; b.tiles[3][0] := 3;
+    b.tiles[0][1] := 4; b.tiles[1][1] := 5; b.tiles[2][1] := 6; b.tiles[3][1] := 7;
+    b.tiles[0][2] := 8; b.tiles[1][2] := 9; b.tiles[2][2] := 10; b.tiles[3][2] := 11;
+    b.tiles[0][3] := 12; b.tiles[1][3] := 13; b.tiles[2][3] := 14; b.tiles[3][3] := 15;
+
+    rotate_block(b, True);
+
+    if  (b.tiles[0][0] <> 12) OR (b.tiles[1][0] <> 8) OR (b.tiles[2][0] <> 4) OR (b.tiles[3][0] <> 0) OR
+        (b.tiles[0][1] <> 13) OR (b.tiles[1][1] <> 9) OR (b.tiles[2][1] <> 5) OR (b.tiles[3][1] <> 1) OR
+        (b.tiles[0][2] <> 14) OR (b.tiles[1][2] <> 10) OR (b.tiles[2][2] <> 6) OR (b.tiles[3][2] <> 2) OR
+        (b.tiles[0][3] <> 15) OR (b.tiles[1][3] <> 11) OR (b.tiles[2][3] <> 7) OR (b.tiles[3][3] <> 3) then
+            raise Exception.Create('Rotated block doesn''t match the expected values.');
+
+    // Rotate back to original
+
+    rotate_block(b, False);
+
+    if  (b.tiles[0][0] <> 0) OR (b.tiles[1][0] <> 1) OR (b.tiles[2][0] <> 2) OR (b.tiles[3][0] <> 3) OR
+        (b.tiles[0][1] <> 4) OR (b.tiles[1][1] <> 5) OR (b.tiles[2][1] <> 6) OR (b.tiles[3][1] <> 7) OR
+        (b.tiles[0][2] <> 8) OR (b.tiles[1][2] <> 9) OR (b.tiles[2][2] <> 10) OR (b.tiles[3][2] <> 11) OR
+        (b.tiles[0][3] <> 12) OR (b.tiles[1][3] <> 13) OR (b.tiles[2][3] <> 14) OR (b.tiles[3][3] <> 15) then
+            raise Exception.Create('Rotating back should restore the original');
+
+    // Rotate 4 times
+
+    for i := 1 to 4 do
+        rotate_block(b, True);
+    
+    if  (b.tiles[0][0] <> 0) OR (b.tiles[1][0] <> 1) OR (b.tiles[2][0] <> 2) OR (b.tiles[3][0] <> 3) OR
+        (b.tiles[0][1] <> 4) OR (b.tiles[1][1] <> 5) OR (b.tiles[2][1] <> 6) OR (b.tiles[3][1] <> 7) OR
+        (b.tiles[0][2] <> 8) OR (b.tiles[1][2] <> 9) OR (b.tiles[2][2] <> 10) OR (b.tiles[3][2] <> 11) OR
+        (b.tiles[0][3] <> 12) OR (b.tiles[1][3] <> 13) OR (b.tiles[2][3] <> 14) OR (b.tiles[3][3] <> 15) then
+            raise Exception.Create('Rotating 4 times shouldn''t change the block');
+
+    // The other way around
+
+    for i := 1 to 4 do
+        rotate_block(b, False);
+
+    if  (b.tiles[0][0] <> 0) OR (b.tiles[1][0] <> 1) OR (b.tiles[2][0] <> 2) OR (b.tiles[3][0] <> 3) OR
+        (b.tiles[0][1] <> 4) OR (b.tiles[1][1] <> 5) OR (b.tiles[2][1] <> 6) OR (b.tiles[3][1] <> 7) OR
+        (b.tiles[0][2] <> 8) OR (b.tiles[1][2] <> 9) OR (b.tiles[2][2] <> 10) OR (b.tiles[3][2] <> 11) OR
+        (b.tiles[0][3] <> 12) OR (b.tiles[1][3] <> 13) OR (b.tiles[2][3] <> 14) OR (b.tiles[3][3] <> 15) then
+            raise Exception.Create('Rotating 4 times shouldn''t change the block');
+end;
 
 end.

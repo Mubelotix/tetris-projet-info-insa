@@ -14,8 +14,8 @@ var i, passed, failed: Integer;
 
 begin
     // List tests
-    test_records[0].addr := @test_collision_test;
-    test_records[0].id := 'test_collision_test';
+    test_records[0].addr := @test_test_collision;
+    test_records[0].id := 'test_test_collision';
     test_records[1].addr := @test_load_blocks;
     test_records[1].id := 'test_load_blocks';
 

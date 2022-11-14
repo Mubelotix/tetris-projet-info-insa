@@ -39,7 +39,14 @@ begin
 end;
 
 procedure insert_score(var scores: ScoreList; new_score: Score);
-begin end;
+begin
+	if scores.length >= 100 then
+		writeln('Erreur: la liste de scores est pleine')
+	else begin
+		scores.tab[scores.length] := new_score;
+		scores.length := scores.length + 1;
+	end;
+end;
 
 procedure save_scores(scores: ScoreList);
 begin end;

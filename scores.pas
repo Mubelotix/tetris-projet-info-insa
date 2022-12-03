@@ -90,21 +90,21 @@ begin
 end;
 
 procedure save_scores(scores: ScoreList);
-
+begin
 var score_data : Text;
 	i , n : integer;
 	begin 
 		n := scores.length;
 		assign(score_data,'scores.txt');
-		rewrite (score_data);
+		reset (score_data);
 		writeln(score_data,scores.length*2);
 		for i:=1 to n do
 			begin
-				writeln(score_data,scores.tab[i-1].pseudo);
-				
-				writeln(score_data,scores.tab[i-1].value);
-				
+				writeln(score_data,load_scores.tab[i-1].pseudo);
+				writeln('rfg');
+				writeln(load_scores.tab[i-1].value);
+				writeln('rfg');
 			end;
-		close(score_data);
-	end;
+end;
+
 end.

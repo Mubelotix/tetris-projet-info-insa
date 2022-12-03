@@ -5,10 +5,17 @@ interface
 uses sysutils;
 
 type Block = record
-    tiles: Array [0..3, 0..3] of Byte;
+    tiles: Array [0..3, 0..3] of Integer;
+    
 end;
 
 type BlockList = Array [0..6] of Block;
+
+type FallingBlock = record
+    tiles: Array [0..3, 0..3] of Integer;
+    x: integer;
+    y:integer;
+end;
 
 // Charge tous les blocs à partir du fichier blocks.txt
 function load_blocks(): BlockList;
@@ -17,6 +24,10 @@ procedure test_load_blocks();
 // Fait tourner le bloc.
 procedure rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique });
 procedure test_rotate_block();
+
+function NewFallingBlock():FallingBlock; //Prend un bloc random et le met dans la grille
+procedure Fall(block: FallingBlock); //Fait tomber d'une case un bloc
+
 
 implementation
 
@@ -41,6 +52,7 @@ begin
         for x := 0 to 3 do begin
             for y := 0 to 3 do begin
                 load_blocks[i].tiles[x][y] := Ord(lines[y][1 + i*5 + x]) - Ord('0');
+                
             end;
         end;
     end;
@@ -128,5 +140,24 @@ begin
         (b.tiles[0][3] <> 12) OR (b.tiles[1][3] <> 13) OR (b.tiles[2][3] <> 14) OR (b.tiles[3][3] <> 15) then
             raise Exception.Create('Rotating 4 times shouldn''t change the block');
 end;
+
+/////MA PARTIE
+ 
+function NewFallingBlock():FallingBlock;
+var x: integer;
+begin
+x := Random(7);
+NewFallingBlock.tiles := load_blocks[x].tiles;
+NewFallingBlock.x :=3;
+NewFallingBlock.y :=0;
+end;
+
+procedure Fall(block: FallingBlock);
+var y: integer;
+begin
+y := block.y;
+block.y := block.y + 1;
+end;
+
 
 end.

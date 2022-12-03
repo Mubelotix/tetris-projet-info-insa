@@ -3,7 +3,7 @@ unit grids;
 {$MODE OBJFPC}
 
 interface
-uses blocks, sysutils;
+uses blocks, sysutils, crt;
 
 type Grid = record
     tiles: Array [0..9, 0..23] of Byte;
@@ -15,10 +15,16 @@ function empty_grid(): Grid;
 // Retourne True si cette position du bloc qui tombe est valide.
 function test_collision(
     g: Grid;
-    falling_block: Block;   // Structure of the falling block
+    falling_block: FallingBlock;   // Structure of the falling block
     x, y: Integer           // Position of the falling block
 ): Boolean;
 procedure test_test_collision();
+
+procedure display(grid:Grid); //Affiche une grille de type Grid
+
+
+function Clone(grid:Grid; block:FallingBlock): Grid; //Fais un clone de la grille + le bloc tombant
+
 
 implementation
 
@@ -32,7 +38,7 @@ end;
 
 function test_collision(
     g: Grid;
-    falling_block: Block;   // Structure of the falling block
+    falling_block: FallingBlock;   // Structure of the falling block
     x, y: Integer           // Position of the falling block
 ): Boolean;
 var tx, ty: Integer;
@@ -48,10 +54,10 @@ begin
 end;
 
 procedure test_test_collision();
-var line: Block;
+var line: FallingBlock;
     g: Grid;
 begin
-    line := load_blocks()[0];
+    line.tiles := load_blocks()[0].tiles;
     g := empty_grid();
 
     // Test a trivially valid position
@@ -77,5 +83,67 @@ begin
     if not(test_collision(g, line, 2, 2)) then
         raise Exception.Create('Single line not overlapping a tile should be valid');
 end;
+
+procedure display(grid:Grid);
+var i,j: integer;
+
+ begin
+ //plafond
+ writeln();
+  write('┌');
+  for i:=0 to 21 do write('─');
+  write('┐');
+  
+ //contenu
+ for j:=3 to 23 do
+ begin
+  
+  writeln();
+  write('│');
+   for i:=0 to 9 do
+    begin
+    //write('  ');
+    if grid.tiles[i][j] = 0 then write('  ')
+    else 
+     begin
+      case grid.tiles[i][j] of
+       1 : TextColor(Blue);
+       2 : TextColor(Brown);
+       3 : TextColor(Cyan);
+       4 : TextColor(Green);
+       5 : TextColor(Magenta);
+       6 : TextColor(Red);
+       7 : TextColor(White);
+       end;
+       write('██');
+       TextColor(White);
+     end;
+     
+    end;
+    write('  │')
+  end;
+  
+  // sol
+  
+ writeln();
+ write('└');
+ for i:=0 to 21 do write('─');
+ write('┘');
+  
+
+ end;
+ 
+
+function Clone(grid:Grid; block:FallingBlock): Grid; //Fais un clone de la grille + le bloc tombant
+var i, j: integer;
+begin
+Clone.tiles := grid.tiles;
+for j:=0 to 3 do
+ for i:=0 to 3 do
+ if block.tiles[i][j] <> 0 then
+  Clone.tiles[block.x+i][j+block.y]:= block.tiles[i][j];
+end;
+
+
 
 end.

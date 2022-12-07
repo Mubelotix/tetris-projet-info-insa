@@ -15,16 +15,19 @@ function empty_grid(): Grid;
 // Retourne True si cette position du bloc qui tombe est valide.
 function test_collision(
     g: Grid;
-    falling_block: FallingBlock;   // Structure of the falling block
+    falling_block: Block;   // Structure of the falling block
     x, y: Integer           // Position of the falling block
 ): Boolean;
 procedure test_test_collision();
 
-procedure display(grid:Grid); //Affiche une grille de type Grid
+procedure display(grid:Grid; following_blocks:BlockList; Score:integer);
 
 
-function Clone(grid:Grid; block:FallingBlock): Grid; //Fais un clone de la grille + le bloc tombant
+function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
 
+function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
+function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
+function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
 
 implementation
 
@@ -38,7 +41,7 @@ end;
 
 function test_collision(
     g: Grid;
-    falling_block: FallingBlock;   // Structure of the falling block
+    falling_block: Block;   // Structure of the falling block
     x, y: Integer           // Position of the falling block
 ): Boolean;
 var tx, ty: Integer;
@@ -54,7 +57,7 @@ begin
 end;
 
 procedure test_test_collision();
-var line: FallingBlock;
+var line: Block;
     g: Grid;
 begin
     line.tiles := load_blocks()[0].tiles;
@@ -84,25 +87,26 @@ begin
         raise Exception.Create('Single line not overlapping a tile should be valid');
 end;
 
-procedure display(grid:Grid);
+procedure display(grid:Grid; following_blocks:BlockList; Score:integer);
 var i,j: integer;
 
  begin
  //plafond
  writeln();
   write('┌');
-  for i:=0 to 21 do write('─');
+  for i:=0 to 19 do write('─');
   write('┐');
   
  //contenu
  for j:=3 to 23 do
  begin
-  
+                                       //Grille en elle-meme
   writeln();
   write('│');
    for i:=0 to 9 do
+   
     begin
-    //write('  ');
+
     if grid.tiles[i][j] = 0 then write('  ')
     else 
      begin
@@ -120,21 +124,58 @@ var i,j: integer;
      end;
      
     end;
-    write('  │')
+    write('│');
+
+                                          //Grille en elle-meme
+                                          
+                         
+ //Blocs suivants
+ 
+   if j=3 then write ('     Score:', Score);
+ 
+   if (j>5)and(j<9) then
+ begin
+    write(' ');
+    if following_blocks[0].tiles[j-5][0] <> 0 then write('██') else write('  ');
+    if following_blocks[0].tiles[j-5][1] <> 0 then write('██') else write('  ');
+    if following_blocks[0].tiles[j-5][2] <> 0 then write('██') else write('  ');
+    if following_blocks[0].tiles[j-5][3] <> 0 then write('██') else write('  ');
+  end; 
+   if (j>8)and(j<13) then
+ begin
+    write(' ');
+    if following_blocks[1].tiles[j-9][0] <> 0 then write('██') else write('  ');
+    if following_blocks[1].tiles[j-9][1] <> 0 then write('██') else write('  ');
+    if following_blocks[1].tiles[j-9][2] <> 0 then write('██') else write('  ');
+    if following_blocks[1].tiles[j-9][3] <> 0 then write('██') else write('  ');
+  end; 
+   if (j>12)and(j<17) then
+ begin
+    write(' ');
+    if following_blocks[2].tiles[j-13][0] <> 0 then write('██') else write('  ');
+    if following_blocks[2].tiles[j-13][1] <> 0 then write('██') else write('  ');
+    if following_blocks[2].tiles[j-13][2] <> 0 then write('██') else write('  ');
+    if following_blocks[2].tiles[j-13][3] <> 0 then write('██') else write('  ');
+  end; 
+
+
+ 
+ 
+                                      
   end;
   
   // sol
   
  writeln();
  write('└');
- for i:=0 to 21 do write('─');
+ for i:=0 to 19 do write('─');
  write('┘');
   
 
  end;
  
 
-function Clone(grid:Grid; block:FallingBlock): Grid; //Fais un clone de la grille + le bloc tombant
+function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
 var i, j: integer;
 begin
 Clone.tiles := grid.tiles;
@@ -144,6 +185,32 @@ for j:=0 to 3 do
   Clone.tiles[block.x+i][j+block.y]:= block.tiles[i][j];
 end;
 
+function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
+var j:integer;
+begin
+FullLineVerification := True;
+for j:=0 to 9 do 
+  begin
+  if grid.tiles[j][i] = 0 then FullLineVerification := False;
+  end;
+end;
 
+function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
+var i,k:integer;
+begin
+for i:=3 to n-1  do
+for k:=0 to 9  do 
+EraseLine.tiles[k][n+3-i] := grid.tiles[k][n+2-i];
+end;
+
+function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
+var k:integer;
+begin
+Defeat := False;
+for k:=0 to 9 do
+  begin
+    if grid.tiles[k][3] <> 0 then Defeat := True;
+  end;
+end;
 
 end.

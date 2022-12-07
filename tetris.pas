@@ -1,35 +1,154 @@
 program tetris;
-uses blocks, grids, crt;
+uses blocks, grids, crt, menu;
 
-var block_list: BlockList;
-var i, x, y: Integer;
+var block_list, following_blocks: BlockList;
+
+var i, x, y, p, score: Integer;
 var MainGrid: Grid;
-var falling_block: FallingBlock;
+var falling_block: Block;
+var Key: char;
+var Activity: Boolean; //Si TRUE, le jeu est en cours
 
 
-procedure mainGame();
+
+
+
+procedure updateFollowingBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
+var i: integer;
+ begin
+ 
+  falling_block := following_blocks[0];  //Le prochain bloc qui spawn est le premier sur la liste
+  for i:=0 to 5 do following_blocks[i]:= following_blocks[i+1];  // Translation a droite de tous les blocs
+  following_blocks[6] := NewFallingBlock();
+
+ end;
+
+
+
+
+procedure mainGame();  //Boucle principale
+var i:integer;
+  begin
+
+  display(Clone(MainGrid, falling_block), following_blocks, score);  //Afficher la grille et le bloc tombant
+
+     if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) = True then //Si le bloc a de la place il tombe
+      begin
+        falling_block.y := falling_block.y + 1;
+    
+      end
+     else    //Sinon la Grille fixe le bloc tombant dans sa structure
+      begin
+       MainGrid := (Clone(MainGrid, falling_block));
+       updateFollowingBlocks();
+
+      end;
+
+  if KeyPressed = True then 
+  begin
+  Key := ReadKey;  //Touche Droite et Gauche
+
+   Case Key
+      Of
+       #0    : Begin
+                if KeyPressed = True then Key:= ReadKey;
+                Case Key
+                Of
+                  #75 : 
+                  begin
+                  if test_collision(MainGrid, falling_block, falling_block.x-1, falling_block.y) = True then
+                  falling_block.x := falling_block.x - 1;
+                  end;
+                 #77 : 
+                 begin
+                 if test_collision(MainGrid, falling_block, falling_block.x+1, falling_block.y) = True then
+                 falling_block.x := falling_block.x + 1;
+                 end;
+                 
+                 #72 :
+                 begin
+                 if test_collision(MainGrid, rotate_block(falling_block, True), falling_block.x, falling_block.y) = True then
+                 falling_block := rotate_block(falling_block, True);
+                 end;
+
+                 End;
+                End;
+              
+  Else 
+  End;         
+  End;    
+  
+  
+for i:=3 to 23 do    //Verifie si une ligne est pleine et la detruit si c'est le cas
 begin
-
-writeln(falling_block.y);
-display(Clone(MainGrid, falling_block));
-
-if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) = True then
+ if FullLineVerification(i, MainGrid)=True then 
   begin
-  falling_block.y := falling_block.y + 1;
-  end
-else 
-  begin
-  MainGrid := (Clone(MainGrid, falling_block));
-  falling_block := NewFallingBlock();
-
-  end;
-
-
-Delay(150);
-clrscr;
+  MainGrid := EraseLine(i, MainGrid);
+  score := score + 100;
+  end;        
 end;
 
+if Defeat(MainGrid) = True then 
+ begin
+ Activity := False;
+
+ end;
+
+Delay(100);
+clrscr;
+
+end;
+
+
+
+
+procedure gameLoop();
 begin
+
+   for i:=0 to 6 do   //initialisation de la liste des 7 premiers blocs qui tomberont
+     begin
+      following_blocks[i] := NewFallingBlock();
+   end;  
+    
+    
+MainGrid := empty_grid();
+display(MainGrid, following_blocks, score);
+updateFollowingBlocks();
+
+score:= 0;
+Activity := True;
+while Activity = True do mainGame();
+p:=1;                                                 //Sert a savoir si on choisit de recommencer ou pas
+while p<2 do   p := selectYorN(Key, Score, p);
+
+if p=3 then gameloop();
+//if p:= -3 then {Menu principal}
+
+end;
+
+
+
+
+
+///////////////////////
+//PROGRAMME PRINCIPAL//
+///////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+begin
+
     block_list := load_blocks();
     for i := 0 to 6 do begin
         for y := 0 to 3 do begin
@@ -41,11 +160,12 @@ begin
         writeln();
     end;
     
-MainGrid := empty_grid();
-display(MainGrid);
-falling_block := NewFallingBlock();
+    
 
-while 2>1 do mainGame();
+gameLoop();
+
+
+
 
 
 end.

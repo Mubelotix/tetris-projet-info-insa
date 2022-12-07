@@ -6,27 +6,22 @@ uses sysutils;
 
 type Block = record
     tiles: Array [0..3, 0..3] of Integer;
+    x: integer;
+    y:integer;
     
 end;
 
 type BlockList = Array [0..6] of Block;
-
-type FallingBlock = record
-    tiles: Array [0..3, 0..3] of Integer;
-    x: integer;
-    y:integer;
-end;
 
 // Charge tous les blocs à partir du fichier blocks.txt
 function load_blocks(): BlockList;
 procedure test_load_blocks();
 
 // Fait tourner le bloc.
-procedure rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique });
+function rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }):Block ; 
 procedure test_rotate_block();
 
-function NewFallingBlock():FallingBlock; //Prend un bloc random et le met dans la grille
-procedure Fall(block: FallingBlock); //Fait tomber d'une case un bloc
+function NewFallingBlock():Block; //Prend un bloc random et le met dans la grille
 
 
 implementation
@@ -68,7 +63,7 @@ begin
     end;
 end;
 
-procedure rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique });
+function rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }):Block ; 
 var new_b: Block;
 var x, y: Integer;
 begin
@@ -76,12 +71,15 @@ begin
         for y := 0 to 3 do
             for x := 0 to 3 do
                 new_b.tiles[x][y] := b.tiles[y][3-x];
+                
     end else begin
         for y := 0 to 3 do
             for x := 0 to 3 do
                 new_b.tiles[x][y] := b.tiles[3-y][x];
     end;
-    b := new_b;
+    rotate_block.x := b.x;
+    rotate_block.y := b.y;
+    rotate_block.tiles := new_b.tiles;
 end;
 
 procedure test_rotate_block();
@@ -143,21 +141,15 @@ end;
 
 /////MA PARTIE
  
-function NewFallingBlock():FallingBlock;
+function NewFallingBlock():Block;
 var x: integer;
 begin
 x := Random(7);
 NewFallingBlock.tiles := load_blocks[x].tiles;
-NewFallingBlock.x :=3;
-NewFallingBlock.y :=0;
+NewFallingBlock.x := 3;
+NewFallingBlock.y := 0;
 end;
 
-procedure Fall(block: FallingBlock);
-var y: integer;
-begin
-y := block.y;
-block.y := block.y + 1;
-end;
 
 
 end.

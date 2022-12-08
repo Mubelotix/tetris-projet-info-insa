@@ -63,6 +63,7 @@ begin
     end;
 end;
 
+
 function rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }):Block ; 
 var new_b: Block;
 var x, y: Integer;

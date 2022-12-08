@@ -132,7 +132,7 @@ while Activity = True do mainGame();
 //Enregistrement du score
 ActualScore.pseudo := 'plaisir';
 insert_score(ListOfScores, ActualScore);
-save_scores(ListOfScores);
+//save_scores(ListOfScores);
 
 
 

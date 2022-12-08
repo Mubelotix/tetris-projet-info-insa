@@ -52,6 +52,10 @@ begin
                         falling_block := rotate_block(falling_block, True);
                         should_render := True;
                     end;
+                    #80: begin if test_collision(MainGrid, rotate_block(falling_block, False), falling_block.x, falling_block.y) = True then
+                        falling_block := rotate_block(falling_block, False);
+                        should_render := True;
+                    end;
                 End;
             End;
             Else

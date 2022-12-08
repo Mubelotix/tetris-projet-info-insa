@@ -20,7 +20,7 @@ function test_collision(
 ): Boolean;
 procedure test_test_collision();
 
-procedure display(grid:Grid; following_blocks:BlockList; Score:integer);
+procedure display(grid:Grid; following_blocks:BlockList; Score, BestScore:integer);
 
 
 function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
@@ -87,7 +87,7 @@ begin
         raise Exception.Create('Single line not overlapping a tile should be valid');
 end;
 
-procedure display(grid:Grid; following_blocks:BlockList; Score:integer);
+procedure display(grid:Grid; following_blocks:BlockList; Score, BestScore:integer);
 var i,j: integer;
 
  begin
@@ -131,7 +131,8 @@ var i,j: integer;
                          
  //Blocs suivants
  
-   if j=3 then write ('     Score:', Score);
+   if j=3 then write ('      Score:', Score);
+   if j=4 then write (' Best Score:', BestScore);
  
    if (j>5)and(j<9) then
  begin

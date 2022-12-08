@@ -91,7 +91,6 @@ if KeyPressed = True then
   clrscr;
   defeatScreen(Score,p);
   Delay(150);
-  write(p);
 end;
 
 

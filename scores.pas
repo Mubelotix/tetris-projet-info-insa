@@ -27,6 +27,9 @@ procedure test_insert_score();
 // Enregistre les scores dans le fichier scores.txt
 procedure save_scores(scores: ScoreList);
 
+//Trouve le meilleur score
+function best_score(score: ScoreList):Integer;
+
 implementation
 
 function empty_score_list(): ScoreList;
@@ -103,6 +106,15 @@ begin
             writeln(score_data,scores.tab[i-1].value);
         end;
     close(score_data);
+end;
+
+function best_score(score: ScoreList):Integer;
+var i:integer;
+begin
+	best_score := 0;
+	for i:=1 to score.length do
+		if score.tab[i].value > best_score then
+			best_score := score.tab[i].value;
 end;
 
 end.

@@ -19,7 +19,7 @@ end;
 
 procedure mainGame(iteration: Int64); //Boucle principale
 var i: integer;
-    should_render: Boolean;
+    should_render: Boolean; // Mettre à vrai quand un affichage est nécessaire
 begin
     should_render := False;
 
@@ -70,12 +70,13 @@ begin
     if Defeat(MainGrid) then
         Activity := False;
 
-    Delay(10);
-
+    // Affiche la grille si nécessaire
     if should_render then begin
         ClrScr();
         display(Clone(MainGrid, falling_block), following_blocks, score);  //Afficher la grille et le bloc tombant
     end;
+
+    Delay(10);
 end;
 
 procedure gameLoop();

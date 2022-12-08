@@ -94,7 +94,7 @@ if Defeat(MainGrid) = True then
 
  end;
 
-Delay(100);
+Delay(40);
 clrscr;
 
 end;

@@ -17,13 +17,17 @@ begin
         following_blocks[6] := NewFallingBlock();
 end;
 
-procedure mainGame(); //Boucle principale
-var i:integer;
+procedure mainGame(iteration: Int64); //Boucle principale
+var i: integer;
+    should_render: Boolean;
 begin
-    display(Clone(MainGrid, falling_block), following_blocks, score);  //Afficher la grille et le bloc tombant
+    should_render := False;
 
-    if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) = True then //Si le bloc a de la place il tombe
-        falling_block.y := falling_block.y + 1
+    if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) then begin //Si le bloc a de la place il tombe
+        if (iteration mod 10) = 0 then begin
+            falling_block.y := falling_block.y + 1;
+            should_render := True;
+        end;
     end else begin //Sinon la Grille fixe le bloc tombant dans sa structure
         MainGrid := (Clone(MainGrid, falling_block));
         updateFollowingBlocks();
@@ -38,12 +42,15 @@ begin
                 Case Key Of
                     #75: begin if test_collision(MainGrid, falling_block, falling_block.x-1, falling_block.y) = True then
                         falling_block.x := falling_block.x - 1;
+                        should_render := True;
                     end;
                     #77: begin if test_collision(MainGrid, falling_block, falling_block.x+1, falling_block.y) = True then
                         falling_block.x := falling_block.x + 1;
+                        should_render := True;
                     end;
                     #72: begin if test_collision(MainGrid, rotate_block(falling_block, True), falling_block.x, falling_block.y) = True then
                         falling_block := rotate_block(falling_block, True);
+                        should_render := True;
                     end;
                 End;
             End;
@@ -56,17 +63,23 @@ begin
         if FullLineVerification(i, MainGrid)=True then begin
             MainGrid := EraseLine(i, MainGrid);
             score := score + 100;
+            should_render := True;
         end;
     end;
 
     if Defeat(MainGrid) then
         Activity := False;
 
-    Delay(40);
-    ClrScr();
+    Delay(10);
+
+    if should_render then begin
+        ClrScr();
+        display(Clone(MainGrid, falling_block), following_blocks, score);  //Afficher la grille et le bloc tombant
+    end;
 end;
 
 procedure gameLoop();
+var iteration: Int64;
 begin
     for i:=0 to 6 do // Initialisation de la liste des 7 premiers blocs qui tomberont
         following_blocks[i] := NewFallingBlock();
@@ -77,7 +90,11 @@ begin
 
     score:= 0;
     Activity := True;
-    while Activity do mainGame();
+    iteration := 0;
+    while Activity do begin
+        iteration := iteration + 1;
+        mainGame(iteration);
+    end;
     p:=1;   //Sert a savoir si on choisit de recommencer ou pas
     while p<2 do p := selectYorN(Key, Score, p);
 

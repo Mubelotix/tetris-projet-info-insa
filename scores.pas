@@ -10,8 +10,8 @@ type Score = record
 end;
 
 type ScoreList = record
-	tab: Array [0..100] of Score;
-	length: Integer;
+    tab: Array [0..100] of Score;
+    length: Integer;
 end;
 
 // Créé une liste de scores vide
@@ -31,80 +31,78 @@ implementation
 
 function empty_score_list(): ScoreList;
 begin
-	empty_score_list.length := 0;
+    empty_score_list.length := 0;
 end;
 
 function load_scores(): ScoreList;
 var score_data : Text;
-	i , n : Integer;
+    i , n : Integer;
 begin
-	assign(score_data,'scores.txt');
-	reset (score_data);
-	readln(score_data,n);
-	for i:=1 to n div 2 do
-		begin
-			readln(score_data,load_scores.tab[i-1].pseudo);
-			readln(score_data,load_scores.tab[i-1].value);
-			load_scores.length := i;
-		end;
+    assign(score_data,'scores.txt');
+    reset (score_data);
+    readln(score_data,n);
+    for i:=1 to n div 2 do
+        begin
+            readln(score_data,load_scores.tab[i-1].pseudo);
+            readln(score_data,load_scores.tab[i-1].value);
+            load_scores.length := i;
+        end;
 end;
 
 procedure insert_score(var scores: ScoreList; new_score: Score);
 begin
-	if scores.length < 100 then begin
-		scores.tab[scores.length] := new_score;
-		scores.length := scores.length + 1;
-	end;
+    if scores.length < 100 then begin
+        scores.tab[scores.length] := new_score;
+        scores.length := scores.length + 1;
+    end;
 end;
 procedure test_insert_score();
 var scores: ScoreList;
-	new_score: Score;
-	i: Integer;
+    new_score: Score;
+    i: Integer;
 begin
-	scores := empty_score_list();
-	if scores.length <> 0 then
-		raise Exception.Create('Scores not empty at creation');
-	
-	new_score.pseudo := 'toto';
-	new_score.value := 10;
-	insert_score(scores, new_score);
-	if scores.length <> 1 then
-		raise Exception.Create('Scores length not incremented');
-	if scores.tab[0].pseudo <> 'toto' then
-		raise Exception.Create('Scores pseudo not set');
-	
-	new_score.pseudo := 'titi';
-	new_score.value := 20;
-	insert_score(scores, new_score);
-	if scores.length <> 2 then
-		raise Exception.Create('Scores length not incremented');
-	if scores.tab[1].pseudo <> 'titi' then
-		raise Exception.Create('Scores pseudo not set');
+    scores := empty_score_list();
+    if scores.length <> 0 then
+        raise Exception.Create('Scores not empty at creation');
+    
+    new_score.pseudo := 'toto';
+    new_score.value := 10;
+    insert_score(scores, new_score);
+    if scores.length <> 1 then
+        raise Exception.Create('Scores length not incremented');
+    if scores.tab[0].pseudo <> 'toto' then
+        raise Exception.Create('Scores pseudo not set');
+    
+    new_score.pseudo := 'titi';
+    new_score.value := 20;
+    insert_score(scores, new_score);
+    if scores.length <> 2 then
+        raise Exception.Create('Scores length not incremented');
+    if scores.tab[1].pseudo <> 'titi' then
+        raise Exception.Create('Scores pseudo not set');
 
-	for i := 0 to 150 do begin
-		insert_score(scores, new_score);
-	end;
+    for i := 0 to 150 do begin
+        insert_score(scores, new_score);
+    end;
 
-	if scores.length <> 100 then
-		raise Exception.Create('Scores length not limited');
+    if scores.length <> 100 then
+        raise Exception.Create('Scores length not limited');
 end;
 
 procedure save_scores(scores: ScoreList);
-
 var score_data : Text;
-	i , n : integer;
-	begin 
-		n := scores.length;
-		assign(score_data,'scores.txt');
-		rewrite (score_data);
-		writeln(score_data,scores.length*2);
-		for i:=1 to n do
-			begin
-				writeln(score_data,scores.tab[i-1].pseudo);
-				
-				writeln(score_data,scores.tab[i-1].value);
-				
-			end;
-		close(score_data);
-	end;
+    i , n : integer;
+begin 
+    n := scores.length;
+    assign(score_data,'scores.txt');
+    rewrite (score_data);
+    writeln(score_data,scores.length*2);
+    for i:=1 to n do
+        begin
+            writeln(score_data,scores.tab[i-1].pseudo);
+            writeln(score_data,scores.tab[i-1].value);
+        end;
+    close(score_data);
+end;
+
 end.

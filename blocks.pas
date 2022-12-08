@@ -5,7 +5,10 @@ interface
 uses sysutils;
 
 type Block = record
-    tiles: Array [0..3, 0..3] of Byte;
+    tiles: Array [0..3, 0..3] of Integer;
+    x: integer;
+    y:integer;
+    
 end;
 
 type BlockList = Array [0..6] of Block;
@@ -15,8 +18,11 @@ function load_blocks(): BlockList;
 procedure test_load_blocks();
 
 // Fait tourner le bloc.
-procedure rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique });
+function rotate_block(b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }): Block; 
 procedure test_rotate_block();
+
+function NewFallingBlock():Block; //Prend un bloc random et le met dans la grille
+
 
 implementation
 
@@ -41,6 +47,7 @@ begin
         for x := 0 to 3 do begin
             for y := 0 to 3 do begin
                 load_blocks[i].tiles[x][y] := Ord(lines[y][1 + i*5 + x]) - Ord('0');
+                
             end;
         end;
     end;
@@ -56,7 +63,7 @@ begin
     end;
 end;
 
-procedure rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique });
+function rotate_block(b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }): Block;
 var new_b: Block;
 var x, y: Integer;
 begin
@@ -64,12 +71,15 @@ begin
         for y := 0 to 3 do
             for x := 0 to 3 do
                 new_b.tiles[x][y] := b.tiles[y][3-x];
+                
     end else begin
         for y := 0 to 3 do
             for x := 0 to 3 do
                 new_b.tiles[x][y] := b.tiles[3-y][x];
     end;
-    b := new_b;
+    rotate_block.x := b.x;
+    rotate_block.y := b.y;
+    rotate_block.tiles := new_b.tiles;
 end;
 
 procedure test_rotate_block();
@@ -128,5 +138,15 @@ begin
         (b.tiles[0][3] <> 12) OR (b.tiles[1][3] <> 13) OR (b.tiles[2][3] <> 14) OR (b.tiles[3][3] <> 15) then
             raise Exception.Create('Rotating 4 times shouldn''t change the block');
 end;
+ 
+function NewFallingBlock(): Block;
+var x: integer;
+begin
+    x := Random(7);
+    NewFallingBlock.tiles := load_blocks[x].tiles;
+    NewFallingBlock.x := 3;
+    NewFallingBlock.y := 0;
+end;
+
 
 end.

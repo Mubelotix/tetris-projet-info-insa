@@ -6,6 +6,8 @@ uses crt, grids, blocks;
 
 procedure defeatScreen(score, p:Integer); // Ecran de defaite
 function selectYorN(Key:Char ; Score, p:integer): integer;   ///Renvoie p. Si p=1 c'est Oui sinon c'est non
+function selectYorN2(Key:Char ; g:integer): integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
+procedure MainScreen(g:Integer);
 
 implementation
 	
@@ -92,6 +94,79 @@ if KeyPressed = True then
   defeatScreen(Score,p);
   Delay(150);
 end;
+
+
+
+
+////PARTIE DE Julien
+
+procedure MainScreen(g:Integer); // Ecran d'accueil
+var j: integer;
+
+begin
+
+writeln();
+writeln();
+writeln();
+
+for j:=1 to 10 do
+	begin
+		writeln();
+		case j of
+		1: write('  _______   _        _     ');
+		2: write(' |__   __| | |      (_)    ');
+		3: write('    | | ___| |_ _ __ _ ___ ');
+		4: write('    | |/ _ \ __|  __| / __|');
+		5: write('    | |  __/ |_| |  | \__ \');
+		6: write('    |_|\___|\__|_|  |_|___/');
+		8: if (g = 1) then write (' 	> Jouer		') else  write (' 	  Jouer'    );
+		10: if (g = -1) then write ('	> Classement	') else  write ('	  Classement	');
+		end;
+
+	end;
+	
+ 
+Delay(10);
+end;
+
+function selectYorN2(Key:Char ; g:integer): integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
+begin
+if KeyPressed = True then 
+  begin
+  Key := ReadKey;  //Touche haut 72 et Bas 80 
+
+   Case Key
+      Of
+       #0    : Begin
+                if KeyPressed = True then Key:= ReadKey;
+                Case Key
+                Of
+                 #80 : 
+                  begin
+                   g:= g*(-1)
+                  end;
+                 #72 : 
+                  begin
+                  g:= g*(-1)
+                  end;
+                 #77 : 
+                  begin
+                  g:= g*(3)
+					end;
+                 End;
+                End;
+              
+
+  End;        
+  End;    
+  selectYorN2 := g;
+  clrscr;
+  MainScreen(g);
+  Delay(150);
+  write(g);
+end;
+
+
 
 
 END.

@@ -3,11 +3,14 @@ uses blocks, grids, crt, menu, scores;
 
 var block_list, following_blocks: BlockList;
 
-var i, x, y, p, BestScore: Integer;
+var i, x, y, p, g, BestScore: Integer;
 var MainGrid: Grid;
 var falling_block: Block;
+var ListOfScores: ScoreList;
+var ActualScore : Score;
 var Key: char;
 var Activity: Boolean; //Si TRUE, le jeu est en cours
+
 
 procedure updateFollowingBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
 var i: integer;
@@ -80,12 +83,19 @@ begin
         display(Clone(MainGrid, falling_block), following_blocks, ActualScore.value, BestScore);  //Afficher la grille et le bloc tombant
     end;
 
-    Delay(10);
+    Delay(20);
 end;
 
-procedure gameLoop();
+procedure gameLoop(passMainMenu:integer);
 var iteration: Int64;
 begin
+
+   {Partie Menu Principal}
+    g:= passMainMenu ;                                                 
+    while g<2 do   g := selectYorN2(Key, g);
+ 
+   if g=3 then begin
+
     // Initialisation de la liste des 7 premiers blocs qui tomberont
     for i:=0 to 6 do   
         following_blocks[i] := NewFallingBlock();
@@ -95,10 +105,12 @@ begin
     ListOfScores := load_scores();
     BestScore := best_score(ListOfScores);
 
+    //Initialisation de la Grille
     MainGrid := empty_grid();
     display(MainGrid, following_blocks, ActualScore.value, BestScore);
     updateFollowingBlocks();
-
+    
+    //Initialisation de la Grille
     ActualScore.value := 0;
     Activity := True;
     iteration := 0;
@@ -114,18 +126,19 @@ begin
 
     //Sert a savoir si on choisit de recommencer ou pas
     p:=1;                                                 
-    while p<2 do   p := selectYorN(Key, ActualScore.value, p);
+    while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, ActualScore.value, p);
 
-    if p=3 then gameloop();
-
-    //if p:= -3 then {Menu principal}
+    if p=3 then gameloop(3);
+    if p = -3 then gameloop(1);
+    
+end;
+    
 end;
 
 
-
-///////////////////////
-//PROGRAMME PRINCIPAL//
-///////////////////////
+///////////////////////////
+////PROGRAMME PRINCIPAL////
+///////////////////////////
 
 
 
@@ -141,5 +154,5 @@ begin
         writeln();
     end;
 
-    gameLoop();
+    gameLoop(1);
 end.

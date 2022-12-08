@@ -138,18 +138,15 @@ begin
         (b.tiles[0][3] <> 12) OR (b.tiles[1][3] <> 13) OR (b.tiles[2][3] <> 14) OR (b.tiles[3][3] <> 15) then
             raise Exception.Create('Rotating 4 times shouldn''t change the block');
 end;
-
-/////MA PARTIE
  
-function NewFallingBlock():Block;
+function NewFallingBlock(): Block;
 var x: integer;
 begin
-x := Random(7);
-NewFallingBlock.tiles := load_blocks[x].tiles;
-NewFallingBlock.x := 3;
-NewFallingBlock.y := 0;
+    x := Random(7);
+    NewFallingBlock.tiles := load_blocks[x].tiles;
+    NewFallingBlock.x := 3;
+    NewFallingBlock.y := 0;
 end;
-
 
 
 end.

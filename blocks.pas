@@ -18,7 +18,7 @@ function load_blocks(): BlockList;
 procedure test_load_blocks();
 
 // Fait tourner le bloc.
-function rotate_block(b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }): Block; 
+function rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }):Block ; 
 procedure test_rotate_block();
 
 function NewFallingBlock():Block; //Prend un bloc random et le met dans la grille
@@ -63,7 +63,7 @@ begin
     end;
 end;
 
-function rotate_block(b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }): Block;
+function rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }):Block ; 
 var new_b: Block;
 var x, y: Integer;
 begin
@@ -138,15 +138,18 @@ begin
         (b.tiles[0][3] <> 12) OR (b.tiles[1][3] <> 13) OR (b.tiles[2][3] <> 14) OR (b.tiles[3][3] <> 15) then
             raise Exception.Create('Rotating 4 times shouldn''t change the block');
 end;
+
+/////MA PARTIE
  
-function NewFallingBlock(): Block;
+function NewFallingBlock():Block;
 var x: integer;
 begin
-    x := Random(7);
-    NewFallingBlock.tiles := load_blocks[x].tiles;
-    NewFallingBlock.x := 3;
-    NewFallingBlock.y := 0;
+x := Random(7);
+NewFallingBlock.tiles := load_blocks[x].tiles;
+NewFallingBlock.x := 3;
+NewFallingBlock.y := 0;
 end;
+
 
 
 end.

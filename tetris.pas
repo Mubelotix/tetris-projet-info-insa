@@ -1,11 +1,13 @@
 program tetris;
-uses blocks, grids, crt, menu;
+uses blocks, grids, crt, menu, scores;
 
 var block_list, following_blocks: BlockList;
 
-var i, x, y, p, score: Integer;
+var i, x, y, p, BestScore: Integer;
 var MainGrid: Grid;
 var falling_block: Block;
+var ListOfScores: ScoreList;
+var ActualScore : Score;
 var Key: char;
 var Activity: Boolean; //Si TRUE, le jeu est en cours
 
@@ -30,7 +32,7 @@ procedure mainGame();  //Boucle principale
 var i:integer;
   begin
 
-  display(Clone(MainGrid, falling_block), following_blocks, score);  //Afficher la grille et le bloc tombant
+  display(Clone(MainGrid, falling_block), following_blocks, ActualScore.value, BestScore);  //Afficher la grille et le bloc tombant
 
      if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) = True then //Si le bloc a de la place il tombe
       begin
@@ -84,7 +86,7 @@ begin
  if FullLineVerification(i, MainGrid)=True then 
   begin
   MainGrid := EraseLine(i, MainGrid);
-  score := score + 100;
+  ActualScore.value := ActualScore.value + 100;
   end;        
 end;
 
@@ -94,7 +96,7 @@ if Defeat(MainGrid) = True then
 
  end;
 
-Delay(40);
+Delay(100);
 clrscr;
 
 end;
@@ -105,21 +107,38 @@ end;
 procedure gameLoop();
 begin
 
-   for i:=0 to 6 do   //initialisation de la liste des 7 premiers blocs qui tomberont
-     begin
-      following_blocks[i] := NewFallingBlock();
-   end;  
+//Initialisation de la liste des 7 premiers blocs qui tomberont
+for i:=0 to 6 do   
+  begin
+  following_blocks[i] := NewFallingBlock();
+end;  
     
     
+//Initialisation des scores    
+ListOfScores := empty_score_list();
+ListOfScores := load_scores();
+BestScore := best_score(ListOfScores);
+
+//Initialisation de la Grille   
 MainGrid := empty_grid();
-display(MainGrid, following_blocks, score);
+display(MainGrid, following_blocks, ActualScore.value, BestScore);
 updateFollowingBlocks();
 
-score:= 0;
+//
+ActualScore.value := 0;
 Activity := True;
 while Activity = True do mainGame();
-p:=1;                                                 //Sert a savoir si on choisit de recommencer ou pas
-while p<2 do   p := selectYorN(Key, Score, p);
+
+//Enregistrement du score
+ActualScore.pseudo := 'plaisir';
+insert_score(ListOfScores, ActualScore);
+save_scores(ListOfScores);
+
+
+
+//Sert a savoir si on choisit de recommencer ou pas
+p:=1;                                                 
+while p<2 do   p := selectYorN(Key, ActualScore.value, p);
 
 if p=3 then gameloop();
 //if p:= -3 then {Menu principal}

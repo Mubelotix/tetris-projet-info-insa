@@ -18,7 +18,7 @@ function load_blocks(): BlockList;
 procedure test_load_blocks();
 
 // Fait tourner le bloc.
-function rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }):Block ; 
+function rotate_block(b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }): Block; 
 procedure test_rotate_block();
 
 function NewFallingBlock():Block; //Prend un bloc random et le met dans la grille
@@ -63,7 +63,7 @@ begin
     end;
 end;
 
-function rotate_block(var b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }):Block ; 
+function rotate_block(b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }): Block;
 var new_b: Block;
 var x, y: Integer;
 begin

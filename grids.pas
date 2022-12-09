@@ -3,7 +3,7 @@ unit grids;
 {$MODE OBJFPC}
 
 interface
-uses blocks, sysutils, crt;
+uses blocks, sysutils, crt, scores;
 
 type Grid = record
     tiles: Array [0..9, 0..23] of Byte;
@@ -28,6 +28,7 @@ function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le 
 function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
 function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
+procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; following_blocks: BlockList; ActualScore: Score );
 
 implementation
 
@@ -121,6 +122,8 @@ var i,j: integer;
        end;
        write('██');
        TextColor(White);
+
+       
      end;
      
     end;
@@ -212,6 +215,28 @@ for k:=0 to 9 do
   begin
     if grid.tiles[k][3] <> 0 then Defeat := True;
   end;
+end;
+
+procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; following_blocks: BlockList; ActualScore: Score );
+var i,j: integer;
+var cligno: grid;
+begin
+cligno := MainGrid;
+for i:=0 to 9 do
+  begin
+  cligno.tiles[i][n]:=0;
+  end;
+  for j:=1 to 3 do
+  begin
+     clrscr;
+     display(Clone(MainGrid, falling_block), following_blocks, ActualScore.value, BestScore);
+     delay(150);
+     clrscr;
+     display(Clone(cligno, falling_block), following_blocks, ActualScore.value, BestScore);
+     delay(150);
+     clrscr;
+  end;
+ 
 end;
 
 end.

@@ -3,7 +3,7 @@ uses blocks, grids, crt, menu, scores;
 
 var block_list, following_blocks: BlockList;
 
-var i, x, y, p, g, BestScore: Integer;
+var i, x, y, p, g, BestScore, DeletedLines: Integer;
 var MainGrid: Grid;
 var falling_block: Block;
 var ListOfScores: ScoreList;
@@ -55,25 +55,34 @@ begin
                         falling_block := rotate_block(falling_block, True);
                         should_render := True;
                     end;
-                    #80: begin if test_collision(MainGrid, rotate_block(falling_block, False), falling_block.x, falling_block.y) = True then
-                        falling_block := rotate_block(falling_block, False);
+                    #80: begin if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) = True then
+                        falling_block.y := falling_block.y + 1;
                         should_render := True;
                     end;
                 End;
-            End;
-            Else
+            End;  
         End;         
     End;    
 
     // Vérifie si une ligne est pleine et la detruit si c'est le cas
+    DeletedLines:=0;
     for i:=3 to 23 do begin
-        if FullLineVerification(i, MainGrid)=True then begin
-            MainGrid := EraseLine(i, MainGrid);
-            ActualScore.value := ActualScore.value + 100;
+        if FullLineVerification(26-i, MainGrid)=True then begin
+            //Clignotement
+            Clignotement(26-i, BestScore, MainGrid, falling_block, following_blocks, ActualScore);
+
+            
+            MainGrid := EraseLine(26-i, MainGrid);
+            ActualScore.value := ActualScore.value + 100 + DeletedLines*100;
+            DeletedLines  := DeletedLines + 1 ;
+            
             should_render := True;
         end;
     end;
-
+    DeletedLines := 0;
+    
+    
+    //Verifie la defaite et arrete le jeu
     if Defeat(MainGrid) then
         Activity := False;
 
@@ -95,6 +104,8 @@ begin
     while g<2 do   g := selectYorN2(Key, g);
  
    if g=3 then begin
+    //Demander pseudo
+    ActualScore.pseudo := askName();
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
     for i:=0 to 6 do   
@@ -120,21 +131,19 @@ begin
     end;
     
     //Enregistrement du score
-    ActualScore.pseudo := 'plaisir';
     insert_score(ListOfScores, ActualScore);
-    //save_scores(ListOfScores);
+    save_scores(ListOfScores);
 
     //Sert a savoir si on choisit de recommencer ou pas
     p:=1;                                                 
     while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, ActualScore.value, p);
-
+   
     if p=3 then gameloop(3);
     if p = -3 then gameloop(1);
     
 end;
     
 end;
-
 
 ///////////////////////////
 ////PROGRAMME PRINCIPAL////

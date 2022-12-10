@@ -19,6 +19,7 @@ begin
     falling_blocks[6] := NewFallingBlock();
 end;
 
+
 procedure gameLoop(passMainMenu:integer);
 var scr: PSDL_Surface; // Surface de dessin principale
 var event: TSDL_Event;
@@ -41,11 +42,11 @@ begin
     last_key_pressed_iteration := 0;
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
-    for i:=0 to 6 do   
-        falling_blocks[i] := NewFallingBlock();
+    for i:=0 to 6 do falling_blocks[i] := NewFallingBlock();
     updateFallingBlocks();
 
     in_game := True;
+    
     while in_game do begin
         iteration := iteration + 1;
         should_render := False;
@@ -102,7 +103,7 @@ begin
         DeletedLines:=0;
         for i:=3 to 23 do begin
             if FullLineVerification(26-i, MainGrid)=True then begin
-                ClignotementSDL(merge(MainGrid, falling_block), 26-i, scr, textures, falling_blocks, lines, ActualScore.value, BestScore);
+                ClignotementSDL(MainGrid, 26-i, scr, textures, falling_blocks, lines, ActualScore.value, BestScore, falling_block);
                 MainGrid := EraseLine(26-i, MainGrid);
                 DeletedLines := DeletedLines + 1;
                 should_render := True;
@@ -120,10 +121,12 @@ begin
 
         // Attendre la prochaine frame
         delay(16);
+        
+        if Defeat(MainGrid) then HALT; {A Continuer ici}
     end;
 
     // Quitter SDL
-    SDL_Quit();
+
     
     //Enregistrement du score
     insert_score(ListOfScores, ActualScore);

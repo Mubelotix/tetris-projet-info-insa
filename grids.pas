@@ -30,7 +30,7 @@ function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE lign
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
 function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
 procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; falling_blocks: BlockList; ActualScore: Score );
-procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer);
+procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 
 implementation
 
@@ -157,7 +157,7 @@ var i,j: integer;
    
     begin
 
-    if grid.tiles[i][j] = 0 then write('  ')
+    if grid.tiles[i][j] = 0 then write(' 0')
     else 
      begin
       case grid.tiles[i][j] of
@@ -288,20 +288,20 @@ for i:=0 to 9 do
  
 end;
 
-procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer);
+procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 var x: Integer;
 begin
     for x := 0 to 9 do begin
         g.tiles[x][line] := 8;
         SDL_FillRect(scr, nil, 0);
-        displaySDL(g, scr, textures, falling_blocks, lines, score, BestScore);
+        displaySDL(merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
         SDL_Flip(scr);
         Delay(16);
     end;
     for x := 0 to 9 do begin
         g.tiles[x][line] := 0;
         SDL_FillRect(scr, nil, 0);
-        displaySDL(g, scr, textures, falling_blocks, lines, score, BestScore);
+        displaySDL(merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
         SDL_Flip(scr);
         Delay(16);
     end;

@@ -95,9 +95,10 @@ var rect: TSDL_Rect;
     x, y: Integer;
     texture: ^PSDL_Surface;
 begin
+    SDL_BlitSurface(textures^.background, nil, scr, nil);
+
     rect.w := 32;
     rect.h := 32;
-
     for x := 0 to 9 do
         for y := 4 to 23 do begin
             rect.x := (x+1) * 32;

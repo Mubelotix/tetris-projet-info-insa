@@ -13,6 +13,7 @@ type TexturesRecord = record
     rainbow_square: PSDL_Surface;
     red_square: PSDL_Surface;
     yellow_square: PSDL_Surface;
+    background: PSDL_Surface;
 end;
 type PTexturesRecord = ^TexturesRecord;
 
@@ -33,6 +34,7 @@ begin
     textures^.rainbow_square := IMG_Load('textures/rainbow_square.png');
     textures^.red_square := IMG_Load('textures/red_square.png');
     textures^.yellow_square := IMG_Load('textures/yellow_square.png');
+    textures^.background := IMG_Load('textures/background.png');
     initTextures := textures;
 end;
 

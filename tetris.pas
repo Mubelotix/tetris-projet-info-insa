@@ -161,7 +161,7 @@ var should_render: Boolean;
 begin
     textures := initTextures();
     SDL_Init(SDL_INIT_VIDEO); // Initialize the video SDL subsystem
-    scr := SDL_SetVideoMode(12*32, 22*32, 8, SDL_SWSURFACE); // Create a software window of 640x480x8 and assign to scr
+    scr := SDL_SetVideoMode(12*32+250, 22*32, 8, SDL_SWSURFACE); // Create a software window of 640x480x8 and assign to scr
     MainGrid := empty_grid();
     iteration := 10;
     last_key_pressed_iteration := 0;

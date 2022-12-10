@@ -2,7 +2,7 @@ program tetris;
 uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER;
 
 
-var block_list, following_blocks: BlockList;
+var block_list, falling_blocks: BlockList;
 
 var i, x, y, p, g, BestScore, DeletedLines: Integer;
 var MainGrid: Grid;
@@ -13,12 +13,13 @@ var Key: char;
 var Activity: Boolean; //Si TRUE, le jeu est en cours
 
 
-procedure updateFollowingBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
+procedure updateFallingBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
 var i: integer;
 begin
-    falling_block := following_blocks[0];  //Le prochain bloc qui spawn est le premier sur la liste
-    for i:=0 to 5 do following_blocks[i]:= following_blocks[i+1];  // Translation a droite de tous les blocs
-        following_blocks[6] := NewFallingBlock();
+    falling_block := falling_blocks[0];  // Le prochain bloc qui spawn est le premier sur la liste
+    for i:=0 to 5 do   
+        falling_blocks[i]:= falling_blocks[i+1]; // Translation a droite de tous les blocs
+    falling_blocks[6] := NewFallingBlock();
 end;
 
 procedure mainGame(iteration: Int64); //Boucle principale
@@ -34,7 +35,7 @@ begin
         end;
     end else begin //Sinon la Grille fixe le bloc tombant dans sa structure
         MainGrid := (Clone(MainGrid, falling_block));
-        updateFollowingBlocks();
+        updateFallingBlocks();
     end;
 
     if KeyPressed = True then begin
@@ -70,7 +71,7 @@ begin
     for i:=3 to 23 do begin
         if FullLineVerification(26-i, MainGrid)=True then begin
             //Clignotement
-            Clignotement(26-i, BestScore, MainGrid, falling_block, following_blocks, ActualScore);
+            Clignotement(26-i, BestScore, MainGrid, falling_block, falling_blocks, ActualScore);
 
             
             MainGrid := EraseLine(26-i, MainGrid);
@@ -90,7 +91,7 @@ begin
     // Affiche la grille si nécessaire
     if should_render then begin
         ClrScr();
-        display(Clone(MainGrid, falling_block), following_blocks, ActualScore.value, BestScore);  //Afficher la grille et le bloc tombant
+        display(Clone(MainGrid, falling_block), falling_blocks, ActualScore.value, BestScore);  //Afficher la grille et le bloc tombant
     end;
 
     Delay(20);
@@ -110,7 +111,7 @@ begin
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
     for i:=0 to 6 do   
-        following_blocks[i] := NewFallingBlock();
+        falling_blocks[i] := NewFallingBlock();
 
     //Initialisation des scores    
     ListOfScores := empty_score_list();
@@ -119,8 +120,8 @@ begin
 
     //Initialisation de la Grille
     MainGrid := empty_grid();
-    display(MainGrid, following_blocks, ActualScore.value, BestScore);
-    updateFollowingBlocks();
+    display(MainGrid, falling_blocks, ActualScore.value, BestScore);
+    updateFallingBlocks();
     
     //Initialisation de la Grille
     ActualScore.value := 0;
@@ -155,18 +156,36 @@ var running: Boolean;
 var event: TSDL_Event;
 var textures: PTexturesRecord;
 var rect: TSDL_RECT;
+var iteration: Int64;
+var should_render: Boolean;
 
 begin
     textures := initTextures();
     SDL_Init(SDL_INIT_VIDEO); // Initialize the video SDL subsystem
     scr := SDL_SetVideoMode(12*32, 22*32, 8, SDL_SWSURFACE); // Create a software window of 640x480x8 and assign to scr
     MainGrid := empty_grid();
-    MainGrid.tiles[0][5] := 1;
+    iteration := 0;
+
+    // Initialisation de la liste des 7 premiers blocs qui tomberont
+    for i:=0 to 6 do   
+        falling_blocks[i] := NewFallingBlock();
+    updateFallingBlocks();
 
     running := True;
     while running do begin
-        // Vider l'écran
-        SDL_FillRect(scr, nil, 0);
+        iteration := iteration + 1;
+        should_render := False;
+
+        if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) then begin //Si le bloc a de la place il tombe
+            if (iteration mod 10) = 0 then begin
+                falling_block.y := falling_block.y + 1;
+                should_render := True;
+            end;
+        end else begin //Sinon la Grille fixe le bloc tombant dans sa structure
+            MainGrid := (Clone(MainGrid, falling_block));
+            updateFallingBlocks();
+            should_render := True;
+        end;
 
         // Lire les events
         SDL_PollEvent(@event);
@@ -175,11 +194,11 @@ begin
         if event.type_ = SDL_QUITEV then 
             running := False;
 
-        // Draw grid
-        displaySDL(MainGrid, scr, textures, following_blocks, ActualScore.value, BestScore);
-
-        // Update screen
-        SDL_Flip(scr);
+        if should_render then begin 
+            SDL_FillRect(scr, nil, 0);
+            displaySDL(Clone(MainGrid, falling_block), scr, textures, falling_blocks, ActualScore.value, BestScore);
+            SDL_Flip(scr);
+        end;
 
         // Attendre la prochaine frame
         delay(16);

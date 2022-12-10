@@ -210,14 +210,14 @@ var i,j: integer;
  end;
  
 
-function merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
-var i, j: integer;
+function merge(grid: Grid; block: Block): Grid; // Fusionne un bloc dans la grille
+var x, y: integer;
 begin
-Clone.tiles := grid.tiles;
-for j:=0 to 3 do
- for i:=0 to 3 do
- if block.tiles[i][j] <> 0 then
-  Clone.tiles[block.x+i][j+block.y]:= block.tiles[i][j];
+    merge.tiles := grid.tiles;
+    for x:=0 to 3 do
+        for y:=0 to 3 do
+            if block.tiles[x][y] <> 0 then
+                merge.tiles[block.x+x][block.y+y]:= block.tiles[x][y];
 end;
 
 function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete

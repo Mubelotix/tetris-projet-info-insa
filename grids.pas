@@ -3,7 +3,7 @@ unit grids;
 {$MODE OBJFPC}
 
 interface
-uses blocks, sysutils, crt, scores, graphics, sdl, sdl_image, SDL_MIXER;
+uses blocks, sysutils, crt, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
 type Grid = record
     tiles: Array [0..9, 0..23] of Byte;
@@ -94,8 +94,18 @@ procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; fall
 var rect: TSDL_Rect;
     x, y: Integer;
     texture: ^PSDL_Surface;
+    text: String;
 begin
     SDL_BlitSurface(textures^.background, nil, scr, nil);
+
+    rect.w := 500;
+    rect.h := 500;
+    rect.x := 380+64;
+    rect.y := 350;
+    text := IntToStr(Score) +#0;
+    textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
+    SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
+    
 
     rect.w := 32;
     rect.h := 32;
@@ -118,6 +128,7 @@ begin
 
             SDL_BlitSurface(texture^, nil, scr, @rect);
         end;
+    
 end;
 
 procedure display(grid:Grid; falling_blocks:BlockList; Score, BestScore:integer);

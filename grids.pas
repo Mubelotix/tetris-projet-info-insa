@@ -3,7 +3,7 @@ unit grids;
 {$MODE OBJFPC}
 
 interface
-uses blocks, sysutils, crt, scores;
+uses blocks, sysutils, crt, scores, graphics, sdl, sdl_image, SDL_MIXER;
 
 type Grid = record
     tiles: Array [0..9, 0..23] of Byte;
@@ -21,6 +21,7 @@ function test_collision(
 procedure test_test_collision();
 
 procedure display(grid:Grid; following_blocks:BlockList; Score, BestScore:integer);
+procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; following_blocks: BlockList; Score, BestScore: Integer);
 
 
 function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
@@ -86,6 +87,21 @@ begin
     // Test a non overlapping position
     if not(test_collision(g, line, 2, 2)) then
         raise Exception.Create('Single line not overlapping a tile should be valid');
+end;
+
+procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; following_blocks: BlockList; Score, BestScore: Integer);
+var rect: TSDL_Rect;
+    x, y: Integer;
+begin
+    rect.w := 32;
+    rect.h := 32;
+
+    for x := 0 to 9 do
+        for y := 4 to 23 do begin
+            rect.x := (x+1) * 32;
+            rect.y := (y-3) * 32;
+            SDL_BlitSurface(textures^.blue_square, nil, scr, @rect);
+        end;
 end;
 
 procedure display(grid:Grid; following_blocks:BlockList; Score, BestScore:integer);

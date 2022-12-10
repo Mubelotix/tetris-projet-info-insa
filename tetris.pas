@@ -34,7 +34,7 @@ begin
             should_render := True;
         end;
     end else begin //Sinon la Grille fixe le bloc tombant dans sa structure
-        MainGrid := (Clone(MainGrid, falling_block));
+        MainGrid := (merge(MainGrid, falling_block));
         updateFallingBlocks();
     end;
 
@@ -91,7 +91,7 @@ begin
     // Affiche la grille si nécessaire
     if should_render then begin
         ClrScr();
-        display(Clone(MainGrid, falling_block), falling_blocks, ActualScore.value, BestScore);  //Afficher la grille et le bloc tombant
+        display(merge(MainGrid, falling_block), falling_blocks, ActualScore.value, BestScore);  //Afficher la grille et le bloc tombant
     end;
 
     Delay(20);
@@ -182,7 +182,7 @@ begin
                 should_render := True;
             end;
         end else begin //Sinon la Grille fixe le bloc tombant dans sa structure
-            MainGrid := (Clone(MainGrid, falling_block));
+            MainGrid := (merge(MainGrid, falling_block));
             updateFallingBlocks();
             should_render := True;
         end;
@@ -227,7 +227,7 @@ begin
         DeletedLines:=0;
         for i:=3 to 23 do begin
             if FullLineVerification(26-i, MainGrid)=True then begin
-                ClignotementSDL(Clone(MainGrid, falling_block), 26-i, scr, textures, falling_blocks, ActualScore.value, BestScore);
+                ClignotementSDL(merge(MainGrid, falling_block), 26-i, scr, textures, falling_blocks, ActualScore.value, BestScore);
                 MainGrid := EraseLine(26-i, MainGrid);
                 DeletedLines  := DeletedLines + 1;
                 should_render := True;
@@ -238,7 +238,7 @@ begin
         // Affiche le jeu si besoin
         if should_render then begin 
             SDL_FillRect(scr, nil, 0);
-            displaySDL(Clone(MainGrid, falling_block), scr, textures, falling_blocks, ActualScore.value, BestScore);
+            displaySDL(merge(MainGrid, falling_block), scr, textures, falling_blocks, ActualScore.value, BestScore);
             SDL_Flip(scr);
         end;
 

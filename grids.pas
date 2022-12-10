@@ -24,7 +24,7 @@ procedure display(grid:Grid; falling_blocks:BlockList; Score, BestScore:integer)
 procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Score, BestScore: Integer);
 
 
-function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
+function merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
 
 function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
@@ -210,7 +210,7 @@ var i,j: integer;
  end;
  
 
-function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
+function merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
 var i, j: integer;
 begin
 Clone.tiles := grid.tiles;
@@ -260,10 +260,10 @@ for i:=0 to 9 do
   for j:=1 to 3 do
   begin
      clrscr;
-     display(Clone(MainGrid, falling_block), falling_blocks, ActualScore.value, BestScore);
+     display(merge(MainGrid, falling_block), falling_blocks, ActualScore.value, BestScore);
      delay(150);
      clrscr;
-     display(Clone(cligno, falling_block), falling_blocks, ActualScore.value, BestScore);
+     display(merge(cligno, falling_block), falling_blocks, ActualScore.value, BestScore);
      delay(150);
      clrscr;
   end;

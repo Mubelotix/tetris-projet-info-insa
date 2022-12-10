@@ -1,5 +1,6 @@
 program tetris;
-uses blocks, grids, crt, menu, scores;
+uses blocks, grids, crt, menu, scores, sdl, sdl_image, SDL_MIXER;
+
 
 var block_list, following_blocks: BlockList;
 
@@ -149,10 +150,62 @@ end;
 ////PROGRAMME PRINCIPAL////
 ///////////////////////////
 
+type TexturesRecord = record
+    blue_square: PSDL_Surface;
+end;
+type PTexturesRecord = ^TexturesRecord;
 
+var scr: PSDL_Surface; // Surface de dessin principale
+var running: Boolean;
+var event: TSDL_Event;
+var textures: PTexturesRecord;
+var rect: TSDL_RECT;
+
+// Fonction honteusement dérobée depuis l'exemple de l'INSA "jeuGrille"
+function initTextures(): PTexturesRecord;
+var textures: PTexturesRecord;
+begin
+    new(textures);
+    textures^.blue_square := IMG_Load('textures/blue_square.png');
+    initTextures := textures;
+end;
 
 begin
-    block_list := load_blocks();
+    textures := initTextures();
+    SDL_Init(SDL_INIT_VIDEO); // Initialize the video SDL subsystem
+    scr := SDL_SetVideoMode(640, 480, 8, SDL_SWSURFACE); // Create a software window of 640x480x8 and assign to scr
+
+    running := True;
+    while running do begin
+        // Vider l'écran
+        SDL_FillRect(scr, nil, 0);
+
+        // Lire les events
+        SDL_PollEvent(@event);
+        //if event.type_=SDL_KEYDOWN then
+        //    processKey(event.key,heros);
+        if event.type_ = SDL_QUITEV then 
+            running := False;
+
+        // Draw blue square
+        rect.x := 0;
+        rect.y := 0;
+        rect.w := 32;
+        rect.h := 32;
+        SDL_BlitSurface(textures^.blue_square, nil, scr, @rect);
+
+        // Update screen
+        SDL_Flip(scr);
+
+        // Attendre la prochaine frame
+        delay(16);
+    end;
+
+    // Quitter SDL
+    SDL_Quit();
+
+
+    {block_list := load_blocks();
     for i := 0 to 6 do begin
         for y := 0 to 3 do begin
             for x := 0 to 3 do
@@ -163,5 +216,5 @@ begin
         writeln();
     end;
 
-    gameLoop(1);
+    gameLoop(1);}
 end.

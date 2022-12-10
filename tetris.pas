@@ -218,8 +218,22 @@ begin
                 end;
             end;
         end;
+
+        // Regarde si on ferme le jeu
         if event.type_ = SDL_QUITEV then 
             running := False;
+
+        // Vérifie si une ligne est pleine et la detruit si c'est le cas
+        DeletedLines:=0;
+        for i:=3 to 23 do begin
+            if FullLineVerification(26-i, MainGrid)=True then begin
+                ClignotementSDL(Clone(MainGrid, falling_block), 26-i, scr, textures, falling_blocks, ActualScore.value, BestScore);
+                MainGrid := EraseLine(26-i, MainGrid);
+                DeletedLines  := DeletedLines + 1;
+                should_render := True;
+            end;
+        end;
+        ActualScore.value := ActualScore.value + 100 + DeletedLines*100;
 
         if should_render then begin 
             SDL_FillRect(scr, nil, 0);

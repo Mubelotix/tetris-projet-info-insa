@@ -176,6 +176,7 @@ begin
         iteration := iteration + 1;
         should_render := False;
 
+        // Fait tomber le bloc qui tombe
         if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) then begin //Si le bloc a de la place il tombe
             if (iteration mod 10) = 0 then begin
                 falling_block.y := falling_block.y + 1;
@@ -235,6 +236,7 @@ begin
         end;
         ActualScore.value := ActualScore.value + 100 + DeletedLines*100;
 
+        // Affiche le jeu si besoin
         if should_render then begin 
             SDL_FillRect(scr, nil, 0);
             displaySDL(Clone(MainGrid, falling_block), scr, textures, falling_blocks, ActualScore.value, BestScore);

@@ -10,7 +10,7 @@ var falling_block: Block;
 var ListOfScores: ScoreList;
 var ActualScore : Score;
 var Key: char;
-var Activity: Boolean; //Si TRUE, le jeu est en cours
+var in_game: Boolean; //Si TRUE, le jeu est en cours
 
 
 procedure updateFallingBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
@@ -86,7 +86,7 @@ begin
     
     //Verifie la defaite et arrete le jeu
     if Defeat(MainGrid) then
-        Activity := False;
+        in_game := False;
 
     // Affiche la grille si nécessaire
     if should_render then begin
@@ -125,9 +125,9 @@ begin
     
     //Initialisation de la Grille
     ActualScore.value := 0;
-    Activity := True;
+    in_game := True;
     iteration := 0;
-    while Activity do begin
+    while in_game do begin
         iteration := iteration + 1;
         mainGame(iteration);
     end;
@@ -152,7 +152,6 @@ end;
 ///////////////////////////
 
 var scr: PSDL_Surface; // Surface de dessin principale
-var running: Boolean;
 var event: TSDL_Event;
 var textures: PTexturesRecord;
 var rect: TSDL_RECT;
@@ -171,8 +170,8 @@ begin
         falling_blocks[i] := NewFallingBlock();
     updateFallingBlocks();
 
-    running := True;
-    while running do begin
+    in_game := True;
+    while in_game do begin
         iteration := iteration + 1;
         should_render := False;
 
@@ -222,7 +221,7 @@ begin
 
         // Regarde si on ferme le jeu
         if event.type_ = SDL_QUITEV then 
-            running := False;
+            in_game := False;
 
         // Vérifie si une ligne est pleine et la detruit si c'est le cas
         DeletedLines:=0;

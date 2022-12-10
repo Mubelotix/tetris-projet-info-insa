@@ -190,8 +190,8 @@ begin
         // Lire les events
         SDL_PollEvent(@event);
         
-        // Regarde si une touche a été pressée en évitant de se déclencher trop rapidement (5 itérations)
-        if (event.type_ = SDL_KEYDOWN) and (last_key_pressed_iteration + 5 < iteration) then begin
+        // Regarde si une touche a été pressée en évitant de se déclencher trop rapidement (10 itérations)
+        if (event.type_ = SDL_KEYDOWN) and (last_key_pressed_iteration + 10 < iteration) then begin
             last_key_pressed_iteration := iteration;
             if event.key.keysym.sym = SDLK_RIGHT then begin
                 if test_collision(MainGrid, falling_block, falling_block.x+1, falling_block.y) = True then begin

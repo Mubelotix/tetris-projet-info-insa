@@ -161,6 +161,7 @@ begin
     SDL_Init(SDL_INIT_VIDEO); // Initialize the video SDL subsystem
     scr := SDL_SetVideoMode(12*32, 22*32, 8, SDL_SWSURFACE); // Create a software window of 640x480x8 and assign to scr
     MainGrid := empty_grid();
+    MainGrid.tiles[0][5] := 1;
 
     running := True;
     while running do begin

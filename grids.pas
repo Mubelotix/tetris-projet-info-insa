@@ -92,6 +92,7 @@ end;
 procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; following_blocks: BlockList; Score, BestScore: Integer);
 var rect: TSDL_Rect;
     x, y: Integer;
+    texture: ^PSDL_Surface;
 begin
     rect.w := 32;
     rect.h := 32;
@@ -100,7 +101,19 @@ begin
         for y := 4 to 23 do begin
             rect.x := (x+1) * 32;
             rect.y := (y-3) * 32;
-            SDL_BlitSurface(textures^.blue_square, nil, scr, @rect);
+
+            case g.tiles[x][y] of
+                1 : texture := @textures^.blue_square;
+                2 : texture := @textures^.cyan_square;
+                3 : texture := @textures^.green_square;
+                4 : texture := @textures^.orange_square;
+                5 : texture := @textures^.purple_square;
+                6 : texture := @textures^.red_square;
+                7 : texture := @textures^.yellow_square;
+                else continue;
+            end;
+
+            SDL_BlitSurface(texture^, nil, scr, @rect);
         end;
 end;
 

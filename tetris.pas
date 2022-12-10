@@ -157,6 +157,7 @@ var textures: PTexturesRecord;
 var rect: TSDL_RECT;
 var iteration, last_key_pressed_iteration: Int64;
 var should_render: Boolean;
+var lines: Integer;
 
 begin
     textures := initTextures();
@@ -167,6 +168,7 @@ begin
 
     MainGrid := empty_grid();
     iteration := 10;
+    lines := 0;
     last_key_pressed_iteration := 0;
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
@@ -231,18 +233,19 @@ begin
         DeletedLines:=0;
         for i:=3 to 23 do begin
             if FullLineVerification(26-i, MainGrid)=True then begin
-                ClignotementSDL(merge(MainGrid, falling_block), 26-i, scr, textures, falling_blocks, ActualScore.value, BestScore);
+                ClignotementSDL(merge(MainGrid, falling_block), 26-i, scr, textures, falling_blocks, lines, ActualScore.value, BestScore);
                 MainGrid := EraseLine(26-i, MainGrid);
                 DeletedLines := DeletedLines + 1;
                 should_render := True;
             end;
         end;
-        ActualScore.value := ActualScore.value + 100 + DeletedLines*100;
+        ActualScore.value := ActualScore.value + DeletedLines*100;
+        lines := lines + DeletedLines;
 
         // Affiche le jeu si besoin
         if should_render then begin 
             SDL_FillRect(scr, nil, 0);
-            displaySDL(merge(MainGrid, falling_block), scr, textures, falling_blocks, ActualScore.value, BestScore);
+            displaySDL(merge(MainGrid, falling_block), scr, textures, falling_blocks, lines, ActualScore.value, BestScore);
             SDL_Flip(scr);
         end;
 

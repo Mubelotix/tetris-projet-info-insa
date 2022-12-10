@@ -21,7 +21,7 @@ function test_collision(
 procedure test_test_collision();
 
 procedure display(grid:Grid; falling_blocks:BlockList; Score, BestScore:integer);
-procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Score, BestScore: Integer);
+procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
 
 
 function merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
@@ -30,7 +30,7 @@ function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE lign
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
 function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
 procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; falling_blocks: BlockList; ActualScore: Score );
-procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Score, BestScore: Integer);
+procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer);
 
 implementation
 
@@ -90,7 +90,7 @@ begin
         raise Exception.Create('Single line not overlapping a tile should be valid');
 end;
 
-procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Score, BestScore: Integer);
+procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
 var rect: TSDL_Rect;
     x, y: Integer;
     texture: ^PSDL_Surface;
@@ -98,14 +98,20 @@ var rect: TSDL_Rect;
 begin
     SDL_BlitSurface(textures^.background, nil, scr, nil);
 
+    // Affiche le nombre de lignes
     rect.w := 500;
     rect.h := 500;
-    rect.x := 380+64;
-    rect.y := 350;
-    text := IntToStr(Score) +#0;
+    rect.x := 380+110;
+    rect.y := 350-1;
+    text := IntToStr(Lines) +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
-    
+
+    // Affiche le score
+    rect.y := 400-1;
+    text := IntToStr(score) +#0;
+    textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
+    SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
 
     rect.w := 32;
     rect.h := 32;
@@ -282,20 +288,20 @@ for i:=0 to 9 do
  
 end;
 
-procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; score, BestScore: Integer);
+procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer);
 var x: Integer;
 begin
     for x := 0 to 9 do begin
         g.tiles[x][line] := 8;
         SDL_FillRect(scr, nil, 0);
-        displaySDL(g, scr, textures, falling_blocks, score, BestScore);
+        displaySDL(g, scr, textures, falling_blocks, lines, score, BestScore);
         SDL_Flip(scr);
         Delay(16);
     end;
     for x := 0 to 9 do begin
         g.tiles[x][line] := 0;
         SDL_FillRect(scr, nil, 0);
-        displaySDL(g, scr, textures, falling_blocks, score, BestScore);
+        displaySDL(g, scr, textures, falling_blocks, lines, score, BestScore);
         SDL_Flip(scr);
         Delay(16);
     end;

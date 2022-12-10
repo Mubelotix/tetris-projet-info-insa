@@ -3,15 +3,12 @@ uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_
 
 
 var block_list, falling_blocks: BlockList;
-
 var i, x, y, p, g, BestScore, DeletedLines: Integer;
 var MainGrid: Grid;
 var falling_block: Block;
 var ListOfScores: ScoreList;
 var ActualScore : Score;
 var Key: char;
-var in_game: Boolean; //Si TRUE, le jeu est en cours
-
 
 procedure updateFallingBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
 var i: integer;
@@ -22,135 +19,7 @@ begin
     falling_blocks[6] := NewFallingBlock();
 end;
 
-procedure mainGame(iteration: Int64); //Boucle principale
-var i: integer;
-    should_render: Boolean; // Mettre à vrai quand un affichage est nécessaire
-begin
-    should_render := False;
-
-    if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) then begin //Si le bloc a de la place il tombe
-        if (iteration mod 10) = 0 then begin
-            falling_block.y := falling_block.y + 1;
-            should_render := True;
-        end;
-    end else begin //Sinon la Grille fixe le bloc tombant dans sa structure
-        MainGrid := (merge(MainGrid, falling_block));
-        updateFallingBlocks();
-    end;
-
-    if KeyPressed = True then begin
-        Key := ReadKey;  //Touche Droite et Gauche
-
-        Case Key of
-            #0: Begin if KeyPressed = True then
-                Key := ReadKey;
-                Case Key Of
-                    #75: begin if test_collision(MainGrid, falling_block, falling_block.x-1, falling_block.y) = True then
-                        falling_block.x := falling_block.x - 1;
-                        should_render := True;
-                    end;
-                    #77: begin if test_collision(MainGrid, falling_block, falling_block.x+1, falling_block.y) = True then
-                        falling_block.x := falling_block.x + 1;
-                        should_render := True;
-                    end;
-                    #72: begin if test_collision(MainGrid, rotate_block(falling_block, True), falling_block.x, falling_block.y) = True then
-                        falling_block := rotate_block(falling_block, True);
-                        should_render := True;
-                    end;
-                    #80: begin if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) = True then
-                        falling_block.y := falling_block.y + 1;
-                        should_render := True;
-                    end;
-                End;
-            End;  
-        End;         
-    End;    
-
-    // Vérifie si une ligne est pleine et la detruit si c'est le cas
-    DeletedLines:=0;
-    for i:=3 to 23 do begin
-        if FullLineVerification(26-i, MainGrid)=True then begin
-            //Clignotement
-            Clignotement(26-i, BestScore, MainGrid, falling_block, falling_blocks, ActualScore);
-
-            
-            MainGrid := EraseLine(26-i, MainGrid);
-            ActualScore.value := ActualScore.value + 100 + DeletedLines*100;
-            DeletedLines  := DeletedLines + 1 ;
-            
-            should_render := True;
-        end;
-    end;
-    DeletedLines := 0;
-    
-    
-    //Verifie la defaite et arrete le jeu
-    if Defeat(MainGrid) then
-        in_game := False;
-
-    // Affiche la grille si nécessaire
-    if should_render then begin
-        ClrScr();
-        display(merge(MainGrid, falling_block), falling_blocks, ActualScore.value, BestScore);  //Afficher la grille et le bloc tombant
-    end;
-
-    Delay(20);
-end;
-
 procedure gameLoop(passMainMenu:integer);
-var iteration: Int64;
-begin
-
-   {Partie Menu Principal}
-    g:= passMainMenu ;                                                 
-    while g<2 do   g := selectYorN2(Key, g);
- 
-   if g=3 then begin
-    //Demander pseudo
-    ActualScore.pseudo := askName();
-
-    // Initialisation de la liste des 7 premiers blocs qui tomberont
-    for i:=0 to 6 do   
-        falling_blocks[i] := NewFallingBlock();
-
-    //Initialisation des scores    
-    ListOfScores := empty_score_list();
-    ListOfScores := load_scores();
-    BestScore := best_score(ListOfScores);
-
-    //Initialisation de la Grille
-    MainGrid := empty_grid();
-    display(MainGrid, falling_blocks, ActualScore.value, BestScore);
-    updateFallingBlocks();
-    
-    //Initialisation de la Grille
-    ActualScore.value := 0;
-    in_game := True;
-    iteration := 0;
-    while in_game do begin
-        iteration := iteration + 1;
-        mainGame(iteration);
-    end;
-    
-    //Enregistrement du score
-    insert_score(ListOfScores, ActualScore);
-    save_scores(ListOfScores);
-
-    //Sert a savoir si on choisit de recommencer ou pas
-    p:=1;                                                 
-    while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, ActualScore.value, p);
-   
-    if p=3 then gameloop(3);
-    if p = -3 then gameloop(1);
-    
-end;
-    
-end;
-
-///////////////////////////
-////PROGRAMME PRINCIPAL////
-///////////////////////////
-
 var scr: PSDL_Surface; // Surface de dessin principale
 var event: TSDL_Event;
 var textures: PTexturesRecord;
@@ -158,7 +27,7 @@ var rect: TSDL_RECT;
 var iteration, last_key_pressed_iteration: Int64;
 var should_render: Boolean;
 var lines: Integer;
-
+var in_game: Boolean; //Si TRUE, le jeu est en cours
 begin
     textures := initTextures();
     SDL_Init(SDL_INIT_VIDEO);
@@ -255,9 +124,28 @@ begin
 
     // Quitter SDL
     SDL_Quit();
+    
+    //Enregistrement du score
+    insert_score(ListOfScores, ActualScore);
+    save_scores(ListOfScores);
+
+    //Sert a savoir si on choisit de recommencer ou pas
+    p:=1;                                                 
+    while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, ActualScore.value, p);
+   
+    if p=3 then gameloop(3);
+    if p = -3 then gameloop(1);
+    
+end;
+
+///////////////////////////
+////PROGRAMME PRINCIPAL////
+///////////////////////////
 
 
-    {block_list := load_blocks();
+
+begin
+    block_list := load_blocks();
     for i := 0 to 6 do begin
         for y := 0 to 3 do begin
             for x := 0 to 3 do
@@ -268,5 +156,5 @@ begin
         writeln();
     end;
 
-    gameLoop(1);}
+    gameLoop(1);
 end.

@@ -156,7 +156,7 @@ var running: Boolean;
 var event: TSDL_Event;
 var textures: PTexturesRecord;
 var rect: TSDL_RECT;
-var iteration: Int64;
+var iteration, last_key_pressed_iteration: Int64;
 var should_render: Boolean;
 
 begin
@@ -189,8 +189,35 @@ begin
 
         // Lire les events
         SDL_PollEvent(@event);
-        //if event.type_=SDL_KEYDOWN then
-        //    processKey(event.key,heros);
+        
+        // Regarde si une touche a été pressée en évitant de se déclencher trop rapidement (5 itérations)
+        if (event.type_ = SDL_KEYDOWN) and (last_key_pressed_iteration + 5 < iteration) then begin
+            last_key_pressed_iteration := iteration;
+            if event.key.keysym.sym = SDLK_RIGHT then begin
+                if test_collision(MainGrid, falling_block, falling_block.x+1, falling_block.y) = True then begin
+                    falling_block.x := falling_block.x + 1;
+                    should_render := True;
+                end;
+            end;
+            if event.key.keysym.sym = SDLK_LEFT then begin
+                if test_collision(MainGrid, falling_block, falling_block.x-1, falling_block.y) = True then begin
+                    falling_block.x := falling_block.x - 1;
+                    should_render := True;
+                end;
+            end;
+            if event.key.keysym.sym = SDLK_UP then begin
+                if test_collision(MainGrid, rotate_block(falling_block, True), falling_block.x, falling_block.y+1) = True then begin
+                    falling_block := rotate_block(falling_block, True);
+                    should_render := True;
+                end;
+            end;
+            if event.key.keysym.sym = SDLK_DOWN then begin
+                if test_collision(MainGrid, falling_block, falling_block.x, falling_block.y+1) = True then begin
+                    falling_block.y := falling_block.y + 1;
+                    should_render := True;
+                end;
+            end;
+        end;
         if event.type_ = SDL_QUITEV then 
             running := False;
 

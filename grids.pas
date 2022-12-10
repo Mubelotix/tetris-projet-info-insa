@@ -230,12 +230,12 @@ for j:=0 to 9 do
   end;
 end;
 
-function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
-var i,k:integer;
+function EraseLine(n: Integer; grid: Grid): Grid;  //Suprimme la ligne n
+var y, x: Integer;
 begin
-for i:=3 to n-1  do
-for k:=0 to 9  do 
-EraseLine.tiles[k][n+3-i] := grid.tiles[k][n+2-i];
+    for y := n downto 1 do
+        for x := 0 to 9 do
+            EraseLine.tiles[x][y] := grid.tiles[x][y-1];
 end;
 
 function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite

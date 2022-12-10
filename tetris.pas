@@ -163,7 +163,8 @@ begin
     SDL_Init(SDL_INIT_VIDEO); // Initialize the video SDL subsystem
     scr := SDL_SetVideoMode(12*32, 22*32, 8, SDL_SWSURFACE); // Create a software window of 640x480x8 and assign to scr
     MainGrid := empty_grid();
-    iteration := 0;
+    iteration := 10;
+    last_key_pressed_iteration := 0;
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
     for i:=0 to 6 do   
@@ -229,7 +230,7 @@ begin
             if FullLineVerification(26-i, MainGrid)=True then begin
                 ClignotementSDL(merge(MainGrid, falling_block), 26-i, scr, textures, falling_blocks, ActualScore.value, BestScore);
                 MainGrid := EraseLine(26-i, MainGrid);
-                DeletedLines  := DeletedLines + 1;
+                DeletedLines := DeletedLines + 1;
                 should_render := True;
             end;
         end;

@@ -23,6 +23,9 @@ type PTexturesRecord = ^TexturesRecord;
 // Fonction honteusement dérobée depuis l'exemple de l'INSA "jeuGrille"
 function initTextures(): PTexturesRecord;
 
+// Libère la mémoire allouée pour les textures
+procedure freeTextures(textures: PTexturesRecord);
+
 implementation
 
 function initTextures(): PTexturesRecord;
@@ -51,6 +54,24 @@ begin
     end;
     //textures^.fontface := TTF_RenderText_Solid(textures^.arial, 'Score : ', textures^.font_color^);
     initTextures := textures;
+end;
+
+procedure freeTextures(textures: PTexturesRecord);
+begin
+    SDL_FreeSurface(textures^.blue_square);
+    SDL_FreeSurface(textures^.cyan_square);
+    SDL_FreeSurface(textures^.green_square);
+    SDL_FreeSurface(textures^.orange_square);
+    SDL_FreeSurface(textures^.purple_square);
+    SDL_FreeSurface(textures^.rainbow_square);
+    SDL_FreeSurface(textures^.red_square);
+    SDL_FreeSurface(textures^.yellow_square);
+    SDL_FreeSurface(textures^.background);
+    SDL_FreeSurface(textures^.fontface);
+    dispose(textures^.font_color);
+    TTF_CloseFont(textures^.arial);
+    TTF_Quit();
+    dispose(textures);
 end;
 
 end.

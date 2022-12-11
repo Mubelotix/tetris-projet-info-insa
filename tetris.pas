@@ -118,8 +118,8 @@ begin
     end;
 
     // Quitter SDL
-
-    
+    freeTextures(textures);
+    SDL_Quit();
 
     //Sert a savoir si on choisit de recommencer ou pas
     p:=1;                                                 

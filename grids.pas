@@ -44,7 +44,7 @@ function CheckDefeat(grid: Grid): Boolean;
 procedure BlinkLine(grid: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; falling_block: Block; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 
 // Suprimme la ligne n de la grille
-function EraseLine(grid: Grid; n: Integer): Grid;
+procedure EraseLine(var grid: Grid; n: Integer);
 
 implementation
 
@@ -177,14 +177,14 @@ begin
 end;
 
 // Suprimme la ligne n de la grille
-function EraseLine(grid: Grid; n: Integer): Grid;
+procedure EraseLine(var grid: Grid; n: Integer);
 var y, x: Integer;
 begin
     for y := n downto 1 do
         for x := 0 to 9 do
-            EraseLine.tiles[x][y] := grid.tiles[x][y-1];
+            grid.tiles[x][y] := grid.tiles[x][y-1];
     for x := 0 to 9 do
-        EraseLine.tiles[x][0] := 0;
+        grid.tiles[x][0] := 0;
 end;
 
 // ------------------ TESTS ------------------

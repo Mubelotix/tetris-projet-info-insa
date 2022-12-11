@@ -93,7 +93,7 @@ begin
         for i:=3 to 23 do begin
             if CheckFullLine(main_grid, 26-i) then begin
                 BlinkLine(main_grid, 26-i, scr, textures, next_blocks, falling_block, deleted_lines, current_score, scores);
-                main_grid := EraseLine(main_grid, 26-i);
+                EraseLine(main_grid, 26-i);
                 newly_deleted_lines := newly_deleted_lines + 1;
                 should_render := True;
             end;

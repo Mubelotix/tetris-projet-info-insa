@@ -2,7 +2,7 @@ unit scores;
 {$MODE OBJFPC}
 
 interface
-uses sysutils;
+uses sysutils, crt, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
 type Score = record
     pseudo: String;
@@ -30,6 +30,9 @@ procedure test_sort_scores();
 
 // Enregistre les scores dans le fichier scores.txt
 procedure save_scores(scores: ScoreList);
+
+// Affiche les scores sur l'écran
+procedure display_scores(scr: PSDL_Surface; textures: PTexturesRecord; scores: ScoreList; pseudo: String);
 
 
 
@@ -98,6 +101,67 @@ begin
         writeln(score_data,scores.tab[i-1].value);
     end;
     close(score_data);
+end;
+
+// Affiche les scores sur l'écran
+procedure display_scores(scr: PSDL_Surface; textures: PTexturesRecord; scores: ScoreList; pseudo: String);
+var rect: TSDL_Rect;
+    i, pos: Integer;
+    event: TSDL_Event;
+    text: String;
+begin
+    rect.w := 500;
+    rect.h := 500;
+    sort_scores(scores);
+    rect.x := 3*32;
+    
+    while True do begin
+        // Events
+        while SDL_PollEvent(@event) > 0 do begin
+            case event.type_ of
+                SDL_QUITEV: begin
+                    SDL_Quit();
+                    halt(0);
+                end;
+                SDL_KEYDOWN: begin
+                    if event.key.keysym.sym = SDLK_ESCAPE then
+                        exit;
+                end;
+            end;
+        end;
+
+        // Clear screen
+        SDL_BlitSurface(textures^.background, nil, scr, nil);
+        
+        // Trouve la position du joueur
+        pos := 0;
+        for i := 0 to scores.length-1 do
+            if scores.tab[i].pseudo = pseudo then begin
+                pos := i;
+                break;
+            end;
+
+        // Affiche les 18 meilleurs scores
+        i := -1;
+        while i < 17 do begin
+            i += 1;
+            if i >= scores.length then continue;
+            rect.y := 3*32 + i * 32;
+            if (i = 17) and (pos > 17) then
+                i := pos;
+
+            text := IntToStr(i+1) + '. ' + scores.tab[i].pseudo + ': ' + IntToStr(scores.tab[i].value) + #0;
+            if i = pos then
+                textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color_yellow^)
+            else
+                textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color_white^);
+            SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
+        end;
+
+        // Render
+        SDL_Flip(scr);
+        Delay(16);
+    end;
 end;
 
 

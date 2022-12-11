@@ -126,12 +126,13 @@ end;
 var score_list: ScoreList;
     new_score: Score;
     Key: char;
-    p: Integer;
+    p, i: Integer;
     pseudo: String;
     scr: PSDL_Surface;
     event: TSDL_Event;
     textures: PTexturesRecord;
 begin
+    pseudo := 'Unknown';
     pseudo := askName();
     
     textures := initTextures();
@@ -161,7 +162,8 @@ begin
             if p=3 then continue;
             if p = -3 then break;
         end;
-       else writeln('Unimplemented choice: ', p)
+        -3: display_scores(scr, textures, score_list, pseudo);
+        else writeln('Unimplemented choice: ', p)
 	end;
 	
     // Quitter SDL

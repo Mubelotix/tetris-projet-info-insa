@@ -139,41 +139,26 @@ for j:=1 to 10 do
 Delay(10);
 end;
 
-function selectYorN2(Key:Char ; g:integer): integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
+function selectYorN2(Key: Char; g: Integer): Integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
 begin
-if KeyPressed = True then 
-  begin
-  Key := ReadKey;  //Touche haut 72 et Bas 80 
-
-   Case Key
-      Of
-       #0    : Begin
-                if KeyPressed = True then Key:= ReadKey;
-                Case Key
-                Of
-                 #80 : 
-                  begin
-                   g:= g*(-1)
-                  end;
-                 #72 : 
-                  begin
-                  g:= g*(-1)
-                  end;
-
-                 End;
+    if KeyPressed then begin
+        Key := ReadKey;  //Touche haut 72 et Bas 80 
+        Case Key Of
+            #0: Begin
+                if KeyPressed then Key:= ReadKey;
+                Case Key Of
+                    #80: g:= g*(-1);
+                    #72: g:= g*(-1);
                 End;
-         ' ' :
-                begin
-                 g:= g*(3)
-				end;       
-
-  End;        
-  End;    
-  selectYorN2 := g;
-  clrscr;
-  MainScreen(g);
-  Delay(150);
-  //write(g);
+            End;
+            ' ': g:= g*(3)
+        end;
+    End;
+    selectYorN2 := g;
+    clrscr;
+    MainScreen(g);
+    Delay(150);
+    //write(g);
 end;
 
 

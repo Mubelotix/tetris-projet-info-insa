@@ -134,16 +134,22 @@ begin
     score_list := load_scores();
     key := ' ';
     pseudo := '';
+    p:=1;
 
-    while True do begin
-        new_score := gameLoop(pseudo, score_list);
-        insert_score(score_list, new_score);
-        save_scores(score_list);
+    while ((p=1) or (p =(-1))) do p := selectYorN2(Key, p);
 
-        //Sert a savoir si on choisit de recommencer ou pas
-        p:=1;                                                 
-        while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, new_score.value, p);
-        if p=3 then continue;
-        if p = -3 then break;
+    case p of
+        3: while True do begin
+            new_score := gameLoop(pseudo, score_list);
+            insert_score(score_list, new_score);
+            save_scores(score_list);
+
+            //Sert a savoir si on choisit de recommencer ou pas
+            p:=1;
+            while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, new_score.value, p);
+            if p=3 then continue;
+            if p = -3 then break;
+        end;
+        else writeln('Unimplemented choice: ', p)
     end;
 end.

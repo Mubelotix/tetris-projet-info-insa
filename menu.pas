@@ -4,7 +4,7 @@ interface
 
 uses crt, grids, blocks, scores;
 
-procedure defeatScreen(score, p:Integer); // Ecran de defaite
+procedure CheckDefeatScreen(score, p:Integer); // Ecran de defaite
 function selectYorN(Key:Char ; Score, p:integer): integer;   ///Renvoie p. Si p=1 c'est Oui sinon c'est non
 function selectYorN2(Key:Char ; g:integer): integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
 procedure MainScreen(g:Integer);
@@ -12,7 +12,7 @@ function askName(): string;
 
 implementation
 	
-procedure defeatScreen(score, p:Integer); // Ecran de defaite
+procedure CheckDefeatScreen(score, p:Integer); // Ecran de defaite
 var i,j: integer;
 
 begin
@@ -65,44 +65,24 @@ end;
 
 function selectYorN(Key:Char ; Score, p:integer): integer;   ///Renvoie p. Si p=1 c'est Oui sinon c'est non
 begin
-if KeyPressed = True then 
-  begin
-  Key := ReadKey;  //Touche Droite et Gauche
-
-   Case Key
-      Of
-       #0    : Begin
+    if KeyPressed then begin
+        Key := ReadKey;  //Touche Droite et Gauche
+        Case Key Of
+            #0: Begin
                 if KeyPressed = True then Key:= ReadKey;
-                Case Key
-                Of
-                 #75 : 
-                  begin
-                   p:= p*(-1)
-                  end;
-                 #77 : 
-                  begin
-                  p:= p*(-1)
-                  end;
-
-                 End;
-                End;
-        ' '  : 
-                begin
-                p:= p*3
-               
-                end;       
-
-  End;     
-     
-  End;    
-  selectYorN := p;
-  clrscr;
-  defeatScreen(Score,p);
-  Delay(50);
+                Case Key Of
+                    #75: p:= p*(-1);
+                    #77: p:= p*(-1);
+                end;
+            End;
+            ' ': p:= p*3;
+        end;
+    End;    
+    selectYorN := p;
+    clrscr;
+    CheckDefeatScreen(Score,p);
+    Delay(50);
 end;
-
-
-
 
 ////PARTIE DE Julien
 
@@ -139,41 +119,26 @@ for j:=1 to 10 do
 Delay(10);
 end;
 
-function selectYorN2(Key:Char ; g:integer): integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
+function selectYorN2(Key: Char; g: Integer): Integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
 begin
-if KeyPressed = True then 
-  begin
-  Key := ReadKey;  //Touche haut 72 et Bas 80 
-
-   Case Key
-      Of
-       #0    : Begin
-                if KeyPressed = True then Key:= ReadKey;
-                Case Key
-                Of
-                 #80 : 
-                  begin
-                   g:= g*(-1)
-                  end;
-                 #72 : 
-                  begin
-                  g:= g*(-1)
-                  end;
-
-                 End;
+    if KeyPressed then begin
+        Key := ReadKey;  //Touche haut 72 et Bas 80 
+        Case Key Of
+            #0: Begin
+                if KeyPressed then Key:= ReadKey;
+                Case Key Of
+                    #80: g:= g*(-1);
+                    #72: g:= g*(-1);
                 End;
-         ' ' :
-                begin
-                 g:= g*(3)
-				end;       
-
-  End;        
-  End;    
-  selectYorN2 := g;
-  clrscr;
-  MainScreen(g);
-  Delay(150);
-  //write(g);
+            End;
+            ' ': g:= g*(3)
+        end;
+    End;
+    selectYorN2 := g;
+    clrscr;
+    MainScreen(g);
+    Delay(150);
+    //write(g);
 end;
 
 

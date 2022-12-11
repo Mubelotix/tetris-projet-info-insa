@@ -2,18 +2,17 @@ program tetris;
 uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
 // Fait jouer l'utilisateur et retourne son score
-function gameLoop(passMainMenu: Integer; pseudo: String; scores: ScoreList): Score;
+function gameLoop(pseudo: String; scores: ScoreList): Score;
 var scr: PSDL_Surface;
     event: TSDL_Event;
     textures: PTexturesRecord;
     iteration, last_key_pressed_iteration: Int64;
-    i, p, deleted_lines, newly_deleted_lines: Integer;
+    i, deleted_lines, newly_deleted_lines: Integer;
     should_render, in_game: Boolean;
     main_grid: Grid;
     falling_block: Block;
     next_blocks: BlockList;
     current_score: Score;
-    Key: char;
 begin
     textures := initTextures();
     SDL_Init(SDL_INIT_VIDEO);
@@ -27,7 +26,6 @@ begin
     newly_deleted_lines := 0;
     current_score.pseudo := pseudo;
     current_score.value := 0;
-    key := ' ';
     last_key_pressed_iteration := 0;
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
@@ -120,14 +118,6 @@ begin
     // Quitter SDL
     freeTextures(textures);
     SDL_Quit();
-
-    //Sert a savoir si on choisit de recommencer ou pas
-    p:=1;                                                 
-    while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, current_score.value, p);
-   
-    if p=3 then gameloop(3, pseudo, scores);
-    if p = -3 then gameloop(1, pseudo, scores);
-    
 end;
 
 ///////////////////////////
@@ -137,9 +127,23 @@ end;
 
 var score_list: ScoreList;
     new_score: Score;
+    Key: char;
+    p: Integer;
+    pseudo: String;
 begin
     score_list := load_scores();
-    new_score := gameLoop(1, '', score_list);
-    insert_score(score_list, new_score);
-    save_scores(score_list);
+    key := ' ';
+    pseudo := '';
+
+    while True do begin
+        new_score := gameLoop(pseudo, score_list);
+        insert_score(score_list, new_score);
+        save_scores(score_list);
+
+        //Sert a savoir si on choisit de recommencer ou pas
+        p:=1;                                                 
+        while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, new_score.value, p);
+        if p=3 then continue;
+        if p = -3 then break;
+    end;
 end.

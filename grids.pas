@@ -73,7 +73,7 @@ end;
 // Affiche une grille sur une surface, ainsi que les éléments d'interface sur la droite
 procedure Display(grid: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 var rect: TSDL_Rect;
-    x, y, i: Integer;
+    x, y, i, pos: Integer;
     texture: ^PSDL_Surface;
     text: String;
 begin
@@ -93,6 +93,33 @@ begin
     text := IntToStr(current_score.value) +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
+
+    // Affiche la liste des scores dynamiques
+    current_score.pseudo := 'YOU';
+    insert_score(scores, current_score);
+    sort_scores(scores);
+    pos := 0;
+    for i := 0 to scores.length-1 do
+        if scores.tab[i].pseudo = 'YOU' then begin
+            pos := i;
+            break;
+        end;
+    rect.x := 12*32;
+    i := -1;
+    while i < 2 do begin
+        i += 1;
+        if i >= scores.length then continue;
+        rect.y := 610 + i * 30;
+        if (i = 2) and (pos > 2) then
+            i := pos;
+
+        text := IntToStr(i+1) + '. ' + scores.tab[i].pseudo + ': ' + IntToStr(scores.tab[i].value) + #0;
+        if i = pos then
+            textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color_yellow^)
+        else
+            textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
+        SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
+    end;
 
     // Affiche la grille principale
     rect.w := 32;

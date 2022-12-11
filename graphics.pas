@@ -10,7 +10,6 @@ type TexturesRecord = record
     green_square: PSDL_Surface;
     orange_square: PSDL_Surface;
     purple_square: PSDL_Surface;
-    font_color_white: PSDL_Color;
     rainbow_square: PSDL_Surface;
     red_square: PSDL_Surface;
     yellow_square: PSDL_Surface;
@@ -18,6 +17,8 @@ type TexturesRecord = record
     jouer: PSDL_Surface;
     scores: PSDL_Surface;
     font_color: PSDL_Color;
+    font_color_white: PSDL_Color;
+    font_color_yellow: PSDL_Color;
     arial: pointer;
     fontface: PSDL_Surface;
 end;
@@ -61,6 +62,10 @@ begin
     textures^.font_color_white^.r := 255;
     textures^.font_color_white^.g := 255;
     textures^.font_color_white^.b := 255;
+    textures^.font_color_yellow := new(PSDL_Color);
+    textures^.font_color_yellow^.r := 175;
+    textures^.font_color_yellow^.g := 175;
+    textures^.font_color_yellow^.b := 0;
     
     IF TTF_INIT<0 THEN HALT;
     textures^.arial := TTF_OpenFont('textures/arial.ttf', 30);
@@ -102,6 +107,8 @@ begin
     SDL_FreeSurface(textures^.background);
     SDL_FreeSurface(textures^.fontface);
     dispose(textures^.font_color);
+    dispose(textures^.font_color_white);
+    dispose(textures^.font_color_yellow);
     TTF_CloseFont(textures^.arial);
     TTF_Quit();
     dispose(textures);

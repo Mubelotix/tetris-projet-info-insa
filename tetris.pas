@@ -137,6 +137,7 @@ begin
 
     Randomize();
     score_list := load_scores();
+    sort_scores(score_list);
     key := ' ';
     pseudo := '';
     p:=1;

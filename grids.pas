@@ -59,36 +59,6 @@ begin
                     test_collision := False;
 end;
 
-procedure test_test_collision();
-var line: Block;
-    g: Grid;
-begin
-    line.tiles := load_blocks()[0].tiles;
-    g := empty_grid();
-
-    // Test a trivially valid position
-    if not(test_collision(g, line, 2, 2)) then
-        raise Exception.Create('Single line at center of grid should be valid');
-
-    // Test trivially invalid positions
-    if test_collision(g, line, -2, 2) then
-        raise Exception.Create('Single line overflowing left should be invalid');
-    if test_collision(g, line, 10, 2) then
-        raise Exception.Create('Single line overflowing right should be invalid');
-    if test_collision(g, line, 2, -1) then
-        raise Exception.Create('Single line overflowing top should be invalid');
-    if test_collision(g, line, 2, 21) then
-        raise Exception.Create('Single line overflowing bottom should be invalid');
-
-    // Test a position overlapping a tile on the grid
-    g.tiles[2][2] := 1;
-    if test_collision(g, line, 1, 2) then
-        raise Exception.Create('Single line overlapping a tile should be invalid');
-
-    // Test a non overlapping position
-    if not(test_collision(g, line, 2, 2)) then
-        raise Exception.Create('Single line not overlapping a tile should be valid');
-end;
 
 procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
 var rect: TSDL_Rect;
@@ -136,97 +106,6 @@ begin
         end;
     
 end;
-
-procedure display(grid:Grid; falling_blocks:BlockList; Score, BestScore:integer);
-var i,j: integer;
-
- begin
- //plafond
- writeln();
-  write('┌');
-  for i:=0 to 19 do write('─');
-  write('┐');
-  
- //contenu
- for j:=3 to 23 do
- begin
-                                       //Grille en elle-meme
-  writeln();
-  write('│');
-   for i:=0 to 9 do
-   
-    begin
-
-    if grid.tiles[i][j] = 0 then write(' 0')
-    else 
-     begin
-      case grid.tiles[i][j] of
-       1 : TextColor(Blue);
-       2 : TextColor(Brown);
-       3 : TextColor(Cyan);
-       4 : TextColor(Green);
-       5 : TextColor(Magenta);
-       6 : TextColor(Red);
-       7 : TextColor(White);
-       end;
-       write('██');
-       TextColor(White);
-
-       
-     end;
-     
-    end;
-    write('│');
-
-                                          //Grille en elle-meme
-                                          
-                         
- //Blocs suivants
- 
-   if j=3 then write ('      Score:', Score);
-   if j=4 then write (' Best Score:', BestScore);
- 
-   if (j>5)and(j<9) then
- begin
-    write(' ');
-    if falling_blocks[0].tiles[j-5][0] <> 0 then write('██') else write('  ');
-    if falling_blocks[0].tiles[j-5][1] <> 0 then write('██') else write('  ');
-    if falling_blocks[0].tiles[j-5][2] <> 0 then write('██') else write('  ');
-    if falling_blocks[0].tiles[j-5][3] <> 0 then write('██') else write('  ');
-  end; 
-   if (j>8)and(j<13) then
- begin
-    write(' ');
-    if falling_blocks[1].tiles[j-9][0] <> 0 then write('██') else write('  ');
-    if falling_blocks[1].tiles[j-9][1] <> 0 then write('██') else write('  ');
-    if falling_blocks[1].tiles[j-9][2] <> 0 then write('██') else write('  ');
-    if falling_blocks[1].tiles[j-9][3] <> 0 then write('██') else write('  ');
-  end; 
-   if (j>12)and(j<17) then
- begin
-    write(' ');
-    if falling_blocks[2].tiles[j-13][0] <> 0 then write('██') else write('  ');
-    if falling_blocks[2].tiles[j-13][1] <> 0 then write('██') else write('  ');
-    if falling_blocks[2].tiles[j-13][2] <> 0 then write('██') else write('  ');
-    if falling_blocks[2].tiles[j-13][3] <> 0 then write('██') else write('  ');
-  end; 
-
-
- 
- 
-                                      
-  end;
-  
-  // sol
-  
- writeln();
- write('└');
- for i:=0 to 19 do write('─');
- write('┘');
-  
-
- end;
- 
 
 function merge(grid: Grid; block: Block): Grid; // Fusionne un bloc dans la grille
 var x, y: integer;
@@ -310,6 +189,45 @@ begin
         SDL_Flip(scr);
         Delay(16);
     end;
+end;
+
+// ------------------ TESTS ------------------
+// 
+// Tous le code qui suit est utilisé dans les tests unitaires.
+// Il n'est pas exécuté dans le jeu.
+//
+// -------------------------------------------
+
+
+procedure test_test_collision();
+var line: Block;
+    g: Grid;
+begin
+    line.tiles := load_blocks()[0].tiles;
+    g := empty_grid();
+
+    // Test a trivially valid position
+    if not(test_collision(g, line, 2, 2)) then
+        raise Exception.Create('Single line at center of grid should be valid');
+
+    // Test trivially invalid positions
+    if test_collision(g, line, -2, 2) then
+        raise Exception.Create('Single line overflowing left should be invalid');
+    if test_collision(g, line, 10, 2) then
+        raise Exception.Create('Single line overflowing right should be invalid');
+    if test_collision(g, line, 2, -1) then
+        raise Exception.Create('Single line overflowing top should be invalid');
+    if test_collision(g, line, 2, 21) then
+        raise Exception.Create('Single line overflowing bottom should be invalid');
+
+    // Test a position overlapping a tile on the grid
+    g.tiles[2][2] := 1;
+    if test_collision(g, line, 1, 2) then
+        raise Exception.Create('Single line overlapping a tile should be invalid');
+
+    // Test a non overlapping position
+    if not(test_collision(g, line, 2, 2)) then
+        raise Exception.Create('Single line not overlapping a tile should be valid');
 end;
 
 end.

@@ -70,7 +70,7 @@ end;
 // Affiche une grille sur une surface, ainsi que les éléments d'interface sur la droite
 procedure Display(grid: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 var rect: TSDL_Rect;
-    x, y: Integer;
+    x, y, i: Integer;
     texture: ^PSDL_Surface;
     text: String;
 begin
@@ -80,13 +80,13 @@ begin
     rect.w := 500;
     rect.h := 500;
     rect.x := 380+110;
-    rect.y := 350-1;
+    rect.y := 350+4;
     text := IntToStr(deleted_lines) +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
 
     // Affiche le score
-    rect.y := 400-1;
+    rect.y := 400+4;
     text := IntToStr(current_score.value) +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
@@ -112,6 +112,28 @@ begin
 
             SDL_BlitSurface(texture^, nil, scr, @rect);
         end;
+
+    // Affiche les prochains blocs
+    for i := 0 to 1 do
+        for x := 0 to 3 do
+            for y := 0 to 3 do begin
+                rect.x := 380 + x * 32;
+                rect.y := 64 + (y+5*i) * 32;
+
+                case next_blocks[i].tiles[x][y] of
+                    1 : texture := @textures^.blue_square;
+                    2 : texture := @textures^.cyan_square;
+                    3 : texture := @textures^.green_square;
+                    4 : texture := @textures^.orange_square;
+                    5 : texture := @textures^.purple_square;
+                    6 : texture := @textures^.red_square;
+                    7 : texture := @textures^.yellow_square;
+                    8 : texture := @textures^.rainbow_square;
+                    else continue;
+                end;
+
+                SDL_BlitSurface(texture^, nil, scr, @rect);
+            end;
 end;
 
 // Fusionne un bloc dans une grille

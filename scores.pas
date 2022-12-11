@@ -59,6 +59,39 @@ begin
         scores.length := scores.length + 1;
     end;
 end;
+
+procedure save_scores(scores: ScoreList);
+var score_data : Text;
+    i , n : integer;
+begin 
+    n := scores.length;
+    assign(score_data,'scores.txt');
+    rewrite (score_data);
+    writeln(score_data,scores.length*2);
+    for i:=1 to n do
+        begin
+            writeln(score_data,scores.tab[i-1].pseudo);
+            writeln(score_data,scores.tab[i-1].value);
+        end;
+    close(score_data);
+end;
+
+function best_score(score: ScoreList):Integer;
+var i:integer;
+begin
+	best_score := 0;
+	for i:=1 to score.length do
+		if score.tab[i].value > best_score then
+			best_score := score.tab[i].value;
+end;
+
+// ------------------ TESTS ------------------
+// 
+// Tous le code qui suit est utilisé dans les tests unitaires.
+// Il n'est pas exécuté dans le jeu.
+//
+// -------------------------------------------
+
 procedure test_insert_score();
 var scores: ScoreList;
     new_score: Score;
@@ -90,31 +123,6 @@ begin
 
     if scores.length <> 100 then
         raise Exception.Create('Scores length not limited');
-end;
-
-procedure save_scores(scores: ScoreList);
-var score_data : Text;
-    i , n : integer;
-begin 
-    n := scores.length;
-    assign(score_data,'scores.txt');
-    rewrite (score_data);
-    writeln(score_data,scores.length*2);
-    for i:=1 to n do
-        begin
-            writeln(score_data,scores.tab[i-1].pseudo);
-            writeln(score_data,scores.tab[i-1].value);
-        end;
-    close(score_data);
-end;
-
-function best_score(score: ScoreList):Integer;
-var i:integer;
-begin
-	best_score := 0;
-	for i:=1 to score.length do
-		if score.tab[i].value > best_score then
-			best_score := score.tab[i].value;
 end;
 
 end.

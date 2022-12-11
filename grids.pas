@@ -3,7 +3,7 @@ unit grids;
 {$MODE OBJFPC}
 
 interface
-uses blocks, sysutils, crt, scores;
+uses blocks, sysutils, crt, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
 type Grid = record
     tiles: Array [0..9, 0..23] of Byte;
@@ -20,15 +20,17 @@ function test_collision(
 ): Boolean;
 procedure test_test_collision();
 
-procedure display(grid:Grid; following_blocks:BlockList; Score, BestScore:integer);
+procedure display(grid:Grid; falling_blocks:BlockList; Score, BestScore:integer);
+procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
 
 
-function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
+function merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
 
 function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
 function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
-procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; following_blocks: BlockList; ActualScore: Score );
+procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; falling_blocks: BlockList; ActualScore: Score );
+procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 
 implementation
 
@@ -88,7 +90,54 @@ begin
         raise Exception.Create('Single line not overlapping a tile should be valid');
 end;
 
-procedure display(grid:Grid; following_blocks:BlockList; Score, BestScore:integer);
+procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
+var rect: TSDL_Rect;
+    x, y: Integer;
+    texture: ^PSDL_Surface;
+    text: String;
+begin
+    SDL_BlitSurface(textures^.background, nil, scr, nil);
+
+    // Affiche le nombre de lignes
+    rect.w := 500;
+    rect.h := 500;
+    rect.x := 380+110;
+    rect.y := 350-1;
+    text := IntToStr(Lines) +#0;
+    textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
+    SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
+
+    // Affiche le score
+    rect.y := 400-1;
+    text := IntToStr(score) +#0;
+    textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
+    SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
+
+    rect.w := 32;
+    rect.h := 32;
+    for x := 0 to 9 do
+        for y := 4 to 23 do begin
+            rect.x := (x+1) * 32;
+            rect.y := (y-3) * 32;
+
+            case g.tiles[x][y] of
+                1 : texture := @textures^.blue_square;
+                2 : texture := @textures^.cyan_square;
+                3 : texture := @textures^.green_square;
+                4 : texture := @textures^.orange_square;
+                5 : texture := @textures^.purple_square;
+                6 : texture := @textures^.red_square;
+                7 : texture := @textures^.yellow_square;
+                8 : texture := @textures^.rainbow_square;
+                else continue;
+            end;
+
+            SDL_BlitSurface(texture^, nil, scr, @rect);
+        end;
+    
+end;
+
+procedure display(grid:Grid; falling_blocks:BlockList; Score, BestScore:integer);
 var i,j: integer;
 
  begin
@@ -108,7 +157,7 @@ var i,j: integer;
    
     begin
 
-    if grid.tiles[i][j] = 0 then write('  ')
+    if grid.tiles[i][j] = 0 then write(' 0')
     else 
      begin
       case grid.tiles[i][j] of
@@ -140,26 +189,26 @@ var i,j: integer;
    if (j>5)and(j<9) then
  begin
     write(' ');
-    if following_blocks[0].tiles[j-5][0] <> 0 then write('██') else write('  ');
-    if following_blocks[0].tiles[j-5][1] <> 0 then write('██') else write('  ');
-    if following_blocks[0].tiles[j-5][2] <> 0 then write('██') else write('  ');
-    if following_blocks[0].tiles[j-5][3] <> 0 then write('██') else write('  ');
+    if falling_blocks[0].tiles[j-5][0] <> 0 then write('██') else write('  ');
+    if falling_blocks[0].tiles[j-5][1] <> 0 then write('██') else write('  ');
+    if falling_blocks[0].tiles[j-5][2] <> 0 then write('██') else write('  ');
+    if falling_blocks[0].tiles[j-5][3] <> 0 then write('██') else write('  ');
   end; 
    if (j>8)and(j<13) then
  begin
     write(' ');
-    if following_blocks[1].tiles[j-9][0] <> 0 then write('██') else write('  ');
-    if following_blocks[1].tiles[j-9][1] <> 0 then write('██') else write('  ');
-    if following_blocks[1].tiles[j-9][2] <> 0 then write('██') else write('  ');
-    if following_blocks[1].tiles[j-9][3] <> 0 then write('██') else write('  ');
+    if falling_blocks[1].tiles[j-9][0] <> 0 then write('██') else write('  ');
+    if falling_blocks[1].tiles[j-9][1] <> 0 then write('██') else write('  ');
+    if falling_blocks[1].tiles[j-9][2] <> 0 then write('██') else write('  ');
+    if falling_blocks[1].tiles[j-9][3] <> 0 then write('██') else write('  ');
   end; 
    if (j>12)and(j<17) then
  begin
     write(' ');
-    if following_blocks[2].tiles[j-13][0] <> 0 then write('██') else write('  ');
-    if following_blocks[2].tiles[j-13][1] <> 0 then write('██') else write('  ');
-    if following_blocks[2].tiles[j-13][2] <> 0 then write('██') else write('  ');
-    if following_blocks[2].tiles[j-13][3] <> 0 then write('██') else write('  ');
+    if falling_blocks[2].tiles[j-13][0] <> 0 then write('██') else write('  ');
+    if falling_blocks[2].tiles[j-13][1] <> 0 then write('██') else write('  ');
+    if falling_blocks[2].tiles[j-13][2] <> 0 then write('██') else write('  ');
+    if falling_blocks[2].tiles[j-13][3] <> 0 then write('██') else write('  ');
   end; 
 
 
@@ -179,14 +228,14 @@ var i,j: integer;
  end;
  
 
-function Clone(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
-var i, j: integer;
+function merge(grid: Grid; block: Block): Grid; // Fusionne un bloc dans la grille
+var x, y: integer;
 begin
-Clone.tiles := grid.tiles;
-for j:=0 to 3 do
- for i:=0 to 3 do
- if block.tiles[i][j] <> 0 then
-  Clone.tiles[block.x+i][j+block.y]:= block.tiles[i][j];
+    merge.tiles := grid.tiles;
+    for x:=0 to 3 do
+        for y:=0 to 3 do
+            if block.tiles[x][y] <> 0 then
+                merge.tiles[block.x+x][block.y+y]:= block.tiles[x][y];
 end;
 
 function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
@@ -199,12 +248,12 @@ for j:=0 to 9 do
   end;
 end;
 
-function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
-var i,k:integer;
+function EraseLine(n: Integer; grid: Grid): Grid;  //Suprimme la ligne n
+var y, x: Integer;
 begin
-for i:=3 to n-1  do
-for k:=0 to 9  do 
-EraseLine.tiles[k][n+3-i] := grid.tiles[k][n+2-i];
+    for y := n downto 1 do
+        for x := 0 to 9 do
+            EraseLine.tiles[x][y] := grid.tiles[x][y-1];
 end;
 
 function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
@@ -217,7 +266,7 @@ for k:=0 to 9 do
   end;
 end;
 
-procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; following_blocks: BlockList; ActualScore: Score );
+procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; falling_blocks: BlockList; ActualScore: Score );
 var i,j: integer;
 var cligno: grid;
 begin
@@ -229,14 +278,33 @@ for i:=0 to 9 do
   for j:=1 to 3 do
   begin
      clrscr;
-     display(Clone(MainGrid, falling_block), following_blocks, ActualScore.value, BestScore);
+     display(merge(MainGrid, falling_block), falling_blocks, ActualScore.value, BestScore);
      delay(150);
      clrscr;
-     display(Clone(cligno, falling_block), following_blocks, ActualScore.value, BestScore);
+     display(merge(cligno, falling_block), falling_blocks, ActualScore.value, BestScore);
      delay(150);
      clrscr;
   end;
  
+end;
+
+procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
+var x: Integer;
+begin
+    for x := 0 to 9 do begin
+        g.tiles[x][line] := 8;
+        SDL_FillRect(scr, nil, 0);
+        displaySDL(merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
+        SDL_Flip(scr);
+        Delay(16);
+    end;
+    for x := 0 to 9 do begin
+        g.tiles[x][line] := 0;
+        SDL_FillRect(scr, nil, 0);
+        displaySDL(merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
+        SDL_Flip(scr);
+        Delay(16);
+    end;
 end;
 
 end.

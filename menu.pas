@@ -27,12 +27,10 @@ implementation
 // Affiche l'écran de defaite
 procedure CheckDefeatScreen(score, p: Integer; scr: PSDL_Surface; textures: PTexturesRecord);
 var 
-	 rect: TSDL_Rect;
-	  texture: ^PSDL_Surface;
-		text: String;
+	rect: TSDL_Rect;
+	texture: ^PSDL_Surface;
+	text: String;
 begin
-
-// Affiche l'écran de defaite
     rect.w := 500;
     rect.h := 500;
     rect.x:=121;
@@ -40,32 +38,31 @@ begin
     text := 'Rejouer ?' +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color_white^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
-		rect.x:=111-60;
-		rect.y := 400;
-     if p=1 then
-                text := '   > Oui        Non    ' +#0
-           else if p=-1 then
-                text := '      Oui      > Non    ' +#0;
-      textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color_white^);
-     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
+	rect.x:=111-60;
+	rect.y := 400;
+    if p=1 then
+        text := '   > Oui        Non    ' +#0
+    else if p=-1 then
+        text := '      Oui      > Non    ' +#0;
+    textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color_white^);
+    SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
 end;
 
 // Renvoie p. Si p=1 c'est Oui sinon c'est non
 function selectYorN(Key:Char ; Score, p:integer;scr: PSDL_Surface; textures: PTexturesRecord): integer;
 var event: TSDL_Event;
 begin
-SDL_FillRect(scr, nil, 0);
-SDL_BlitSurface(textures^.background, nil, scr, nil);
-   SDL_PollEvent(@event);
-if (event.type_ = SDL_KEYDOWN) then
-begin 
+    SDL_FillRect(scr, nil, 0);
+    SDL_BlitSurface(textures^.background, nil, scr, nil);
+    SDL_PollEvent(@event);
+    if (event.type_ = SDL_KEYDOWN) then begin 
+        if (event.key.keysym.sym = SDLK_RIGHT) or (event.key.keysym.sym = SDLK_LEFT) then
+            p:= p * (-1);
+        if (event.key.keysym.sym = SDLK_SPACE) then
+            p := p*3;
+        Delay(150);
+    end;
 
-if (event.key.keysym.sym = SDLK_RIGHT) or (event.key.keysym.sym = SDLK_LEFT) then p:= p * (-1);
-if (event.key.keysym.sym = SDLK_SPACE) then p := p*3;
-
-Delay(150);
-end;
-       
     selectYorN := p;
     clrscr;
     CheckDefeatScreen(Score,p,scr,textures);
@@ -73,20 +70,15 @@ end;
     Delay(50);
 end;
 
-
-
 // Affiche l'écran d'accueil
 procedure MainScreen(g:Integer; scr: PSDL_Surface; textures: PTexturesRecord);
-
 begin
-
-   SDL_FillRect(scr, nil, 0);
-   if g = 1 then 
+    SDL_FillRect(scr, nil, 0);
+    if g = 1 then 
 		SDL_BlitSurface(textures^.jouer, nil, scr, nil)
 	else if g = -1 then
 		SDL_BlitSurface(textures^.scores, nil, scr, nil);
-		 SDL_Flip(scr);
-
+	SDL_Flip(scr);
     Delay(10);
 end;
 
@@ -95,21 +87,17 @@ function selectYorN2(Key: Char; g: Integer; scr: PSDL_Surface; textures: PTextur
 var event: TSDL_Event;
 begin
     SDL_PollEvent(@event);
-	if (event.type_ = SDL_KEYDOWN) then
-begin 
-
-	if (event.key.keysym.sym = SDLK_UP) or (event.key.keysym.sym = SDLK_DOWN) then g:= g * (-1);
-	if (event.key.keysym.sym = SDLK_SPACE) then g := g*3;
-
-end;
-    
-    
+	if (event.type_ = SDL_KEYDOWN) then begin 
+	    if (event.key.keysym.sym = SDLK_UP) or (event.key.keysym.sym = SDLK_DOWN) then
+            g:= g * (-1);
+	    if (event.key.keysym.sym = SDLK_SPACE) then
+            g := g*3;
+    end;
     
     selectYorN2 := g;
     clrscr;
     MainScreen(g,scr,textures);
     Delay(150);
-    //write(g);
 end;
 
 // Demande le pseudo

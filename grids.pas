@@ -91,6 +91,7 @@ begin
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
 
+    // Affiche la grille principale
     rect.w := 32;
     rect.h := 32;
     for x := 0 to 9 do

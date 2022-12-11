@@ -10,7 +10,8 @@ var ListOfScores: ScoreList;
 var ActualScore : Score;
 var Key: char;
 
-procedure UpdateNextBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
+// Renouvelle le bloc qui tombe à partir du premier dans la liste des prochains et complète cette liste
+procedure UpdateNextBlocks();
 var i: integer;
 begin
     falling_block := next_blocks[0];  // Le prochain bloc qui spawn est le premier sur la liste

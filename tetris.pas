@@ -1,5 +1,5 @@
 program tetris;
-uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
+uses blocks, grids, crt, menu, scores, graphics, music, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
 // Fait jouer l'utilisateur et retourne son score
 function gameLoop(pseudo: String; scores: ScoreList;scr: PSDL_Surface; event: TSDL_Event;textures: PTexturesRecord): Score;
@@ -11,6 +11,7 @@ var
     falling_block: Block;
     next_blocks: BlockList;
     current_score: Score;
+    sound: pMIX_MUSIC;
 begin
     main_grid := EmptyGrid();
     iteration := 10;
@@ -19,6 +20,8 @@ begin
     current_score.pseudo := pseudo;
     current_score.value := 0;
     last_key_pressed_iteration := 0;
+
+    play_music(sound);
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
     for i:=0 to 6 do next_blocks[i] := NewFallingBlock();
@@ -115,7 +118,7 @@ begin
         end;
     end;
 
-    
+    stop_music(sound);
 end;
 
 ///////////////////////////

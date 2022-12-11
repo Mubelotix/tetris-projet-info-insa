@@ -10,7 +10,7 @@ type TestRecord = record
     id: String;
 end;
 
-const TEST_COUNT = 4;
+const TEST_COUNT = 5;
 
 var test_records: array [0..TEST_COUNT] of TestRecord;
 var i, passed, failed: Integer;
@@ -25,6 +25,8 @@ begin
     test_records[2].id := 'test_rotate_block';
     test_records[3].addr := @test_insert_score;
     test_records[3].id := 'test_insert_score';
+    test_records[4].addr := @test_sort_scores;
+    test_records[4].id := 'test_sort_scores';
 
     // Run tests
     passed := 0;

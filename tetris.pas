@@ -1,19 +1,19 @@
 program tetris;
 uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
-procedure gameLoop(passMainMenu: Integer; pseudo: String);
-var scr: PSDL_Surface; // Surface de dessin principale
-var event: TSDL_Event;
-var textures: PTexturesRecord;
-var iteration, last_key_pressed_iteration: Int64;
-var i, p, deleted_lines, newly_deleted_lines: Integer;
-var should_render, in_game: Boolean;
-var main_grid: Grid;
-var falling_block: Block;
-var next_blocks: BlockList;
-var scores: ScoreList;
-var current_score: Score;
-var Key: char;
+// Fait jouer l'utilisateur et retourne son score
+function gameLoop(passMainMenu: Integer; pseudo: String; scores: ScoreList): Score;
+var scr: PSDL_Surface;
+    event: TSDL_Event;
+    textures: PTexturesRecord;
+    iteration, last_key_pressed_iteration: Int64;
+    i, p, deleted_lines, newly_deleted_lines: Integer;
+    should_render, in_game: Boolean;
+    main_grid: Grid;
+    falling_block: Block;
+    next_blocks: BlockList;
+    current_score: Score;
+    Key: char;
 begin
     textures := initTextures();
     SDL_Init(SDL_INIT_VIDEO);
@@ -27,6 +27,7 @@ begin
     newly_deleted_lines := 0;
     current_score.pseudo := pseudo;
     current_score.value := 0;
+    key := ' ';
     last_key_pressed_iteration := 0;
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
@@ -110,22 +111,22 @@ begin
         // Attendre la prochaine frame
         delay(16);
         
-        if CheckDefeat(main_grid) then HALT; {A Continuer ici}
+        if CheckDefeat(main_grid) then begin
+            gameLoop := current_score;
+            in_game := False;
+        end;
     end;
 
     // Quitter SDL
 
     
-    //Enregistrement du score
-    insert_score(scores, current_score);
-    save_scores(scores);
 
     //Sert a savoir si on choisit de recommencer ou pas
     p:=1;                                                 
     while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, current_score.value, p);
    
-    if p=3 then gameloop(3, pseudo);
-    if p = -3 then gameloop(1, pseudo);
+    if p=3 then gameloop(3, pseudo, scores);
+    if p = -3 then gameloop(1, pseudo, scores);
     
 end;
 
@@ -134,7 +135,11 @@ end;
 ///////////////////////////
 
 
-
+var score_list: ScoreList;
+    new_score: Score;
 begin
-    gameLoop(1, '');
+    score_list := load_scores();
+    new_score := gameLoop(1, '', score_list);
+    insert_score(score_list, new_score);
+    save_scores(score_list);
 end.

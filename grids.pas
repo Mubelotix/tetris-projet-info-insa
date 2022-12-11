@@ -20,7 +20,6 @@ function test_collision(
 ): Boolean;
 procedure test_test_collision();
 
-procedure display(grid:Grid; falling_blocks:BlockList; Score, BestScore:integer);
 procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
 
 
@@ -29,7 +28,6 @@ function merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le 
 function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
 function Defeat(grid: Grid): Boolean;  // Vérifie si des blocs ont atteint le plafond
-procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; falling_blocks: BlockList; ActualScore: Score );
 procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 
 implementation
@@ -148,28 +146,6 @@ begin
                 Defeat := True;
                 break;
             end;
-end;
-
-procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; falling_blocks: BlockList; ActualScore: Score );
-var i,j: integer;
-var cligno: grid;
-begin
-cligno := MainGrid;
-for i:=0 to 9 do
-  begin
-  cligno.tiles[i][n]:=0;
-  end;
-  for j:=1 to 3 do
-  begin
-     clrscr;
-     display(merge(MainGrid, falling_block), falling_blocks, ActualScore.value, BestScore);
-     delay(150);
-     clrscr;
-     display(merge(cligno, falling_block), falling_blocks, ActualScore.value, BestScore);
-     delay(150);
-     clrscr;
-  end;
- 
 end;
 
 procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);

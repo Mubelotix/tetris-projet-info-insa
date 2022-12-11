@@ -6,13 +6,11 @@ var scr: PSDL_Surface; // Surface de dessin principale
 var event: TSDL_Event;
 var textures: PTexturesRecord;
 var iteration, last_key_pressed_iteration: Int64;
-var should_render: Boolean;
-var lines: Integer;
-var in_game: Boolean; //Si TRUE, le jeu est en cours
-var next_blocks: BlockList;
-var i, p, BestScore, DeletedLines: Integer;
+var i, p, BestScore, lines, DeletedLines: Integer;
+var should_render, in_game: Boolean;
 var main_grid: Grid;
 var falling_block: Block;
+var next_blocks: BlockList;
 var scores: ScoreList;
 var current_score: Score;
 var Key: char;

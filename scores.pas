@@ -56,6 +56,7 @@ begin
             readln(score_data,load_scores.tab[i-1].value);
             load_scores.length := i;
         end;
+        close(score_data);
 end;
 
 // Insère new_score dans la liste de scores en la gardant triée
@@ -88,14 +89,22 @@ procedure save_scores(scores: ScoreList);
 var score_data : Text;
     i , n : integer;
 begin 
+	writeln('00');
     n := scores.length;
+    writeln('01');
     assign(score_data,'scores.txt');
-    rewrite (score_data);
+    writeln('02');
+    rewrite(score_data);
+    writeln('03');
     writeln(score_data,scores.length*2);
+    writeln('04');
     for i:=1 to n do
         begin
+			writeln('05');
             writeln(score_data,scores.tab[i-1].pseudo);
+            writeln('06');
             writeln(score_data,scores.tab[i-1].value);
+            writeln('07');
         end;
     close(score_data);
 end;

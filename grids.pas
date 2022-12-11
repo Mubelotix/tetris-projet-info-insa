@@ -82,14 +82,14 @@ begin
     // Affiche le nombre de lignes
     rect.w := 500;
     rect.h := 500;
-    rect.x := 380+110;
-    rect.y := 350+4;
+    rect.x := 490 ;
+    rect.y := 490-10 ;
     text := IntToStr(deleted_lines) +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
 
     // Affiche le score
-    rect.y := 400+4;
+    rect.y := 527-1;
     text := IntToStr(current_score.value) +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
@@ -110,8 +110,8 @@ begin
         for x := 0 to 3 do
             for y := 0 to 3 do begin
                 if next_blocks[i].tiles[x][y] = 0 then continue;
-                rect.x := 380 + x * 32;
-                rect.y := 64 + (y+5*i) * 32;
+                rect.x := 425 + x * 32;
+                rect.y := 110 + (y+6*i) * 32;
                 SDL_BlitSurface(get_block(textures, next_blocks[i].tiles[x][y]), nil, scr, @rect);
             end;
 end;

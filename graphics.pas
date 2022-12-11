@@ -10,10 +10,13 @@ type TexturesRecord = record
     green_square: PSDL_Surface;
     orange_square: PSDL_Surface;
     purple_square: PSDL_Surface;
+    font_color_white: PSDL_Color;
     rainbow_square: PSDL_Surface;
     red_square: PSDL_Surface;
     yellow_square: PSDL_Surface;
     background: PSDL_Surface;
+    jouer: PSDL_Surface;
+    scores: PSDL_Surface;
     font_color: PSDL_Color;
     arial: pointer;
     fontface: PSDL_Surface;
@@ -48,10 +51,17 @@ begin
     textures^.red_square := IMG_Load('textures/red_square.png');
     textures^.yellow_square := IMG_Load('textures/yellow_square.png');
     textures^.background := IMG_Load('textures/background.png');
+    textures^.jouer := IMG_Load('textures/jouer.png');
+    textures^.scores := IMG_Load('textures/scores.png');
     textures^.font_color := new(PSDL_Color);
     textures^.font_color^.r := 0;
     textures^.font_color^.g := 0;
     textures^.font_color^.b := 50;
+    textures^.font_color_white := new(PSDL_Color);
+    textures^.font_color_white^.r := 255;
+    textures^.font_color_white^.g := 255;
+    textures^.font_color_white^.b := 255;
+    
     IF TTF_INIT<0 THEN HALT;
     textures^.arial := TTF_OpenFont('textures/arial.ttf', 30);
     if textures^.arial = nil then

@@ -2,10 +2,8 @@ program tetris;
 uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
 // Fait jouer l'utilisateur et retourne son score
-function gameLoop(pseudo: String; scores: ScoreList): Score;
-var scr: PSDL_Surface;
-    event: TSDL_Event;
-    textures: PTexturesRecord;
+function gameLoop(pseudo: String; scores: ScoreList;scr: PSDL_Surface; event: TSDL_Event;textures: PTexturesRecord): Score;
+var 
     iteration, last_key_pressed_iteration: Int64;
     i, deleted_lines, newly_deleted_lines: Integer;
     should_render, in_game: Boolean;
@@ -14,12 +12,6 @@ var scr: PSDL_Surface;
     next_blocks: BlockList;
     current_score: Score;
 begin
-    textures := initTextures();
-    SDL_Init(SDL_INIT_VIDEO);
-    scr := SDL_SetVideoMode(12*32+250, 22*32, 8, SDL_SWSURFACE);
-    IF scr=NIL THEN HALT;
-    IF TTF_INIT<0 THEN HALT;
-
     main_grid := EmptyGrid();
     iteration := 10;
     deleted_lines := 0;
@@ -115,9 +107,7 @@ begin
         end;
     end;
 
-    // Quitter SDL
-    freeTextures(textures);
-    SDL_Quit();
+    
 end;
 
 ///////////////////////////
@@ -130,27 +120,41 @@ var score_list: ScoreList;
     Key: char;
     p: Integer;
     pseudo: String;
+    scr: PSDL_Surface;
+    event: TSDL_Event;
+    textures: PTexturesRecord;
 begin
+    textures := initTextures();
+    SDL_Init(SDL_INIT_VIDEO);
+    scr := SDL_SetVideoMode(12*32+250, 22*32, 8, SDL_SWSURFACE);
+    IF scr=NIL THEN HALT;
+    IF TTF_INIT<0 THEN HALT;
+
     Randomize();
     score_list := load_scores();
     key := ' ';
     pseudo := '';
     p:=1;
 
-    while ((p=1) or (p =(-1))) do p := selectYorN2(Key, p);
+    while ((p=1) or (p =(-1))) do p := selectYorN2(Key,p,scr,textures);
 
     case p of
-        3: while True do begin
-            new_score := gameLoop(pseudo, score_list);
+		3: while True do begin
+            new_score := gameLoop(pseudo, score_list,scr, event, textures);
             insert_score(score_list, new_score);
+            
             save_scores(score_list);
-
+			
             //Sert a savoir si on choisit de recommencer ou pas
             p:=1;
-            while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, new_score.value, p);
+            while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, new_score.value, p,scr,textures);
             if p=3 then continue;
             if p = -3 then break;
         end;
-        else writeln('Unimplemented choice: ', p)
-    end;
+       else writeln('Unimplemented choice: ', p)
+	end;
+	
+    // Quitter SDL
+    freeTextures(textures);
+	SDL_Quit();
 end.

@@ -4,15 +4,25 @@ interface
 
 uses crt, grids, blocks, scores;
 
-procedure CheckDefeatScreen(score, p:Integer); // Ecran de defaite
-function selectYorN(Key:Char ; Score, p:integer): integer;   ///Renvoie p. Si p=1 c'est Oui sinon c'est non
-function selectYorN2(Key:Char ; g:integer): integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
+// Affiche l'écran de defaite
+procedure CheckDefeatScreen(score, p: Integer);
+
+// Renvoie p. Si p=1 c'est Oui sinon c'est non
+function selectYorN(Key:Char ; Score, p: Integer): Integer;
+
+// Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
+function selectYorN2(Key:Char ; g: Integer): Integer;
+
+// Affiche l'écran d'accueil
 procedure MainScreen(g:Integer);
+
+// Demande le pseudo
 function askName(): string;
 
 implementation
-	
-procedure CheckDefeatScreen(score, p: Integer); // Ecran de defaite
+
+// Affiche l'écran de defaite
+procedure CheckDefeatScreen(score, p: Integer);
 var i, j: Integer;
 begin
     writeln();
@@ -50,7 +60,7 @@ begin
             write('│');
         end;
     end;
-    
+
     //sol
     writeln();
     write('└');
@@ -59,8 +69,8 @@ begin
     write('┘');
 end;
 
-
-function selectYorN(Key:Char ; Score, p:integer): integer;   ///Renvoie p. Si p=1 c'est Oui sinon c'est non
+// Renvoie p. Si p=1 c'est Oui sinon c'est non
+function selectYorN(Key:Char ; Score, p:integer): integer;
 begin
     if KeyPressed then begin
         Key := ReadKey;  //Touche Droite et Gauche
@@ -83,40 +93,34 @@ end;
 
 ////PARTIE DE Julien
 
-procedure MainScreen(g:Integer); // Ecran d'accueil
+// Affiche l'écran d'accueil
+procedure MainScreen(g:Integer);
 var j: integer;
-
 begin
+    writeln();
+    writeln();
+    writeln();
 
-writeln();
-writeln();
-writeln();
+    for j:=1 to 10 do begin
+        writeln();
+        case j of
+            1: write('  _______   _        _     ');
+            2: write(' |__   __| | |      (_)    ');
+            3: write('    | | ___| |_ _ __ _ ___ ');
+            4: write('    | |/ _ \ __|  __| / __|');
+            5: write('    | |  __/ |_| |  | \__ \');
+            6: write('    |_|\___|\__|_|  |_|___/'); 
 
-for j:=1 to 10 do
-	begin
-		writeln();
-		
-		case j of
-		1: write('  _______   _        _     ');
-		2: write(' |__   __| | |      (_)    ');
-		3: write('    | | ___| |_ _ __ _ ___ ');
-		4: write('    | |/ _ \ __|  __| / __|');
-		5: write('    | |  __/ |_| |  | \__ \');
-		6: write('    |_|\___|\__|_|  |_|___/'); 
-		
-		
-		
-		8: if (g = 1) then write (' 	> Jouer		') else  write (' 	  Jouer'    );
-		10: if (g = -1) then write ('	> Classement	') else  write ('	  Classement	');
-		end;
+            8: if (g = 1) then write (' 	> Jouer		') else  write (' 	  Jouer'    );
+            10: if (g = -1) then write ('	> Classement	') else  write ('	  Classement	');
+        end;
+    end;
 
-	end;
-	
- 
-Delay(10);
+    Delay(10);
 end;
 
-function selectYorN2(Key: Char; g: Integer): Integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
+// Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
+function selectYorN2(Key: Char; g: Integer): Integer;
 begin
     if KeyPressed then begin
         Key := ReadKey;  //Touche haut 72 et Bas 80 
@@ -138,17 +142,12 @@ begin
     //write(g);
 end;
 
-
-
+// Demande le pseudo
 function askName(): string;
 begin
-clrscr();
-writeln('Inserez votre pseudo');
-Readln(askname);
+    clrscr();
+    writeln('Inserez votre pseudo');
+    Readln(askname);
 end;
 
-
-
-
-END.
-
+end.

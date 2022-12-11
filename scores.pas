@@ -30,6 +30,9 @@ procedure save_scores(scores: ScoreList);
 //Trouve le meilleur score
 function best_score(score: ScoreList):Integer;
 
+
+
+
 implementation
 
 function empty_score_list(): ScoreList;
@@ -84,6 +87,9 @@ begin
 		if score.tab[i].value > best_score then
 			best_score := score.tab[i].value;
 end;
+
+
+
 
 // ------------------ TESTS ------------------
 // 

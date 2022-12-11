@@ -6,9 +6,8 @@ uses sysutils;
 
 type Block = record
     tiles: Array [0..3, 0..3] of Integer;
-    x: integer;
-    y:integer;
-    
+    x: Integer;
+    y: Integer;
 end;
 
 type BlockList = Array [0..6] of Block;
@@ -27,8 +26,10 @@ function NewFallingBlock(): Block;
 // Renouvelle le bloc qui tombe à partir du premier dans la liste des prochains et complète cette liste
 procedure UpdateNextBlocks(var falling_block: Block; var next_blocks: BlockList);
 
-implementation
 
+
+
+implementation
 
 function load_blocks(): BlockList;
 var f: Text;
@@ -67,22 +68,20 @@ begin
 end;
 
 function rotate_block(b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }): Block;
-var new_b: Block;
 var x, y: Integer;
 begin
     if direction then begin
         for y := 0 to 3 do
             for x := 0 to 3 do
-                new_b.tiles[x][y] := b.tiles[y][3-x];
+                rotate_block.tiles[x][y] := b.tiles[y][3-x];
                 
     end else begin
         for y := 0 to 3 do
             for x := 0 to 3 do
-                new_b.tiles[x][y] := b.tiles[3-y][x];
+                rotate_block.tiles[x][y] := b.tiles[3-y][x];
     end;
     rotate_block.x := b.x;
     rotate_block.y := b.y;
-    rotate_block.tiles := new_b.tiles;
 end;
 
 // Renouvelle le bloc qui tombe à partir du premier dans la liste des prochains et complète cette liste
@@ -94,6 +93,19 @@ begin
         next_blocks[i]:= next_blocks[i+1]; // Translation a droite de tous les blocs
     next_blocks[6] := NewFallingBlock();
 end;
+
+// Renouvelle le bloc qui tombe à partir du premier dans la liste des prochains et complète cette liste
+function NewFallingBlock(): Block;
+var x: integer;
+begin
+    x := Random(7);
+    NewFallingBlock.tiles := load_blocks[x].tiles;
+    NewFallingBlock.x := 3;
+    NewFallingBlock.y := 0;
+end;
+
+
+
 
 // ------------------ TESTS ------------------
 // 
@@ -118,7 +130,7 @@ begin
     b.tiles[0][2] := 8; b.tiles[1][2] := 9; b.tiles[2][2] := 10; b.tiles[3][2] := 11;
     b.tiles[0][3] := 12; b.tiles[1][3] := 13; b.tiles[2][3] := 14; b.tiles[3][3] := 15;
 
-    rotate_block(b, True);
+    b := rotate_block(b, True);
 
     if  (b.tiles[0][0] <> 12) OR (b.tiles[1][0] <> 8) OR (b.tiles[2][0] <> 4) OR (b.tiles[3][0] <> 0) OR
         (b.tiles[0][1] <> 13) OR (b.tiles[1][1] <> 9) OR (b.tiles[2][1] <> 5) OR (b.tiles[3][1] <> 1) OR
@@ -128,7 +140,7 @@ begin
 
     // Rotate back to original
 
-    rotate_block(b, False);
+    b := rotate_block(b, False);
 
     if  (b.tiles[0][0] <> 0) OR (b.tiles[1][0] <> 1) OR (b.tiles[2][0] <> 2) OR (b.tiles[3][0] <> 3) OR
         (b.tiles[0][1] <> 4) OR (b.tiles[1][1] <> 5) OR (b.tiles[2][1] <> 6) OR (b.tiles[3][1] <> 7) OR
@@ -139,7 +151,7 @@ begin
     // Rotate 4 times
 
     for i := 1 to 4 do
-        rotate_block(b, True);
+        b := rotate_block(b, True);
     
     if  (b.tiles[0][0] <> 0) OR (b.tiles[1][0] <> 1) OR (b.tiles[2][0] <> 2) OR (b.tiles[3][0] <> 3) OR
         (b.tiles[0][1] <> 4) OR (b.tiles[1][1] <> 5) OR (b.tiles[2][1] <> 6) OR (b.tiles[3][1] <> 7) OR
@@ -150,7 +162,7 @@ begin
     // The other way around
 
     for i := 1 to 4 do
-        rotate_block(b, False);
+        b := rotate_block(b, False);
 
     if  (b.tiles[0][0] <> 0) OR (b.tiles[1][0] <> 1) OR (b.tiles[2][0] <> 2) OR (b.tiles[3][0] <> 3) OR
         (b.tiles[0][1] <> 4) OR (b.tiles[1][1] <> 5) OR (b.tiles[2][1] <> 6) OR (b.tiles[3][1] <> 7) OR
@@ -158,15 +170,5 @@ begin
         (b.tiles[0][3] <> 12) OR (b.tiles[1][3] <> 13) OR (b.tiles[2][3] <> 14) OR (b.tiles[3][3] <> 15) then
             raise Exception.Create('Rotating 4 times shouldn''t change the block');
 end;
- 
-function NewFallingBlock(): Block;
-var x: integer;
-begin
-    x := Random(7);
-    NewFallingBlock.tiles := load_blocks[x].tiles;
-    NewFallingBlock.x := 3;
-    NewFallingBlock.y := 0;
-end;
-
 
 end.

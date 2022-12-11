@@ -131,6 +131,7 @@ var score_list: ScoreList;
     p: Integer;
     pseudo: String;
 begin
+    Randomize();
     score_list := load_scores();
     key := ' ';
     pseudo := '';

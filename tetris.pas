@@ -32,7 +32,7 @@ begin
 
         // Fait tomber le bloc qui tombe
         if CheckCollision(main_grid, falling_block, falling_block.x, falling_block.y+1) then begin //Si le bloc a de la place il tombe
-            if (iteration mod 10) = 0 then begin
+            if (iteration mod 14) = 0 then begin
                 falling_block.y := falling_block.y + 1;
                 should_render := True;
             end;
@@ -45,30 +45,33 @@ begin
         // Lire les events
         SDL_PollEvent(@event);
         
-        // Regarde si une touche a été pressée en évitant de se déclencher trop rapidement (7 itérations)
-        if (event.type_ = SDL_KEYDOWN) and (last_key_pressed_iteration + 7 < iteration) then begin
-            last_key_pressed_iteration := iteration;
+        // Regarde si une touche a été pressée en évitant de se déclencher trop rapidement (6 itérations)
+        if (event.type_ = SDL_KEYDOWN) and (last_key_pressed_iteration + 6 < iteration) then begin
             if event.key.keysym.sym = SDLK_RIGHT then begin
                 if CheckCollision(main_grid, falling_block, falling_block.x+1, falling_block.y) = True then begin
                     falling_block.x := falling_block.x + 1;
+                    last_key_pressed_iteration := iteration;
                     should_render := True;
                 end;
             end;
             if event.key.keysym.sym = SDLK_LEFT then begin
                 if CheckCollision(main_grid, falling_block, falling_block.x-1, falling_block.y) = True then begin
                     falling_block.x := falling_block.x - 1;
+                    last_key_pressed_iteration := iteration;
                     should_render := True;
                 end;
             end;
             if event.key.keysym.sym = SDLK_UP then begin
                 if CheckCollision(main_grid, rotate_block(falling_block, True), falling_block.x, falling_block.y+1) = True then begin
                     falling_block := rotate_block(falling_block, True);
+                    last_key_pressed_iteration := iteration;
                     should_render := True;
                 end;
             end;
             if event.key.keysym.sym = SDLK_DOWN then begin
                 if CheckCollision(main_grid, falling_block, falling_block.x, falling_block.y+1) = True then begin
                     falling_block.y := falling_block.y + 1;
+                    last_key_pressed_iteration := iteration;
                     should_render := True;
                 end;
             end;

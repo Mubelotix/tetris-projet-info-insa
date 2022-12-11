@@ -95,44 +95,20 @@ begin
     rect.h := 32;
     for x := 0 to 9 do
         for y := 4 to 23 do begin
+            if grid.tiles[x][y] = 0 then continue;
             rect.x := (x+1) * 32;
             rect.y := (y-3) * 32;
-
-            case grid.tiles[x][y] of
-                1 : texture := @textures^.blue_square;
-                2 : texture := @textures^.cyan_square;
-                3 : texture := @textures^.green_square;
-                4 : texture := @textures^.orange_square;
-                5 : texture := @textures^.purple_square;
-                6 : texture := @textures^.red_square;
-                7 : texture := @textures^.yellow_square;
-                8 : texture := @textures^.rainbow_square;
-                else continue;
-            end;
-
-            SDL_BlitSurface(texture^, nil, scr, @rect);
+            SDL_BlitSurface(get_block(textures, grid.tiles[x][y]), nil, scr, @rect);
         end;
 
     // Affiche les prochains blocs
     for i := 0 to 1 do
         for x := 0 to 3 do
             for y := 0 to 3 do begin
+                if next_blocks[i].tiles[x][y] = 0 then continue;
                 rect.x := 380 + x * 32;
                 rect.y := 64 + (y+5*i) * 32;
-
-                case next_blocks[i].tiles[x][y] of
-                    1 : texture := @textures^.blue_square;
-                    2 : texture := @textures^.cyan_square;
-                    3 : texture := @textures^.green_square;
-                    4 : texture := @textures^.orange_square;
-                    5 : texture := @textures^.purple_square;
-                    6 : texture := @textures^.red_square;
-                    7 : texture := @textures^.yellow_square;
-                    8 : texture := @textures^.rainbow_square;
-                    else continue;
-                end;
-
-                SDL_BlitSurface(texture^, nil, scr, @rect);
+                SDL_BlitSurface(get_block(textures, next_blocks[i].tiles[x][y]), nil, scr, @rect);
             end;
 end;
 

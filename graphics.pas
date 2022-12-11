@@ -23,11 +23,15 @@ type PTexturesRecord = ^TexturesRecord;
 // Initialise les textures
 function initTextures(): PTexturesRecord;
 
+// Retourne la texture d'un bloc correspondant à la couleur
+function get_block(textures: PTexturesRecord; color: integer): PSDL_Surface;
+
 // Libère la mémoire allouée pour les textures
 procedure freeTextures(textures: PTexturesRecord);
 
 implementation
 
+// Initialise les textures
 function initTextures(): PTexturesRecord;
 var textures: PTexturesRecord;
 begin
@@ -56,6 +60,22 @@ begin
     initTextures := textures;
 end;
 
+// Retourne la texture d'un bloc correspondant à la couleur
+function get_block(textures: PTexturesRecord; color: integer): PSDL_Surface;
+begin
+    case color of
+        1 : get_block := textures^.blue_square;
+        2 : get_block := textures^.cyan_square;
+        3 : get_block := textures^.green_square;
+        4 : get_block := textures^.orange_square;
+        5 : get_block := textures^.purple_square;
+        6 : get_block := textures^.red_square;
+        7 : get_block := textures^.yellow_square;
+        8 : get_block := textures^.rainbow_square;
+    end;
+end;
+
+// Libère la mémoire allouée pour les textures
 procedure freeTextures(textures: PTexturesRecord);
 begin
     SDL_FreeSurface(textures^.blue_square);

@@ -156,7 +156,6 @@ begin
 		3: while True do begin
             new_score := gameLoop(pseudo, score_list,scr, textures);
             insert_score(score_list, new_score);
-            
             save_scores(score_list);
 			
             //Sert a savoir si on choisit de recommencer ou pas

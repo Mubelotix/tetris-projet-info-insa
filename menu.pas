@@ -60,6 +60,10 @@ begin
         if (event.key.keysym.sym = SDLK_SPACE) then
             p := p*3;
     end;
+    if (event.type_ = SDL_QUITEV) then begin
+        SDL_Quit();
+        halt(0);
+    end;
     while (SDL_PollEvent(@event) > 0) do begin end; // vider la file d'evenements
 
     selectYorN := p;
@@ -90,6 +94,10 @@ begin
             g:= g * (-1);
 	    if (event.key.keysym.sym = SDLK_SPACE) then
             g := g*3;
+    end;
+    if (event.type_ = SDL_QUITEV) then begin
+        SDL_Quit();
+        halt(0);
     end;
     while (SDL_PollEvent(@event) > 0) do begin end; // vider la file d'evenements
     

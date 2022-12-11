@@ -63,7 +63,6 @@ begin
     while (SDL_PollEvent(@event) > 0) do begin end; // vider la file d'evenements
 
     selectYorN := p;
-    clrscr;
     CheckDefeatScreen(Score,p,scr,textures);
     SDL_Flip(scr);
     Delay(100);
@@ -95,7 +94,6 @@ begin
     while (SDL_PollEvent(@event) > 0) do begin end; // vider la file d'evenements
     
     selectYorN2 := g;
-    clrscr;
     MainScreen(g,scr,textures);
     Delay(100);
 end;

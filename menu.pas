@@ -65,44 +65,24 @@ end;
 
 function selectYorN(Key:Char ; Score, p:integer): integer;   ///Renvoie p. Si p=1 c'est Oui sinon c'est non
 begin
-if KeyPressed = True then 
-  begin
-  Key := ReadKey;  //Touche Droite et Gauche
-
-   Case Key
-      Of
-       #0    : Begin
+    if KeyPressed then begin
+        Key := ReadKey;  //Touche Droite et Gauche
+        Case Key Of
+            #0: Begin
                 if KeyPressed = True then Key:= ReadKey;
-                Case Key
-                Of
-                 #75 : 
-                  begin
-                   p:= p*(-1)
-                  end;
-                 #77 : 
-                  begin
-                  p:= p*(-1)
-                  end;
-
-                 End;
-                End;
-        ' '  : 
-                begin
-                p:= p*3
-               
-                end;       
-
-  End;     
-     
-  End;    
-  selectYorN := p;
-  clrscr;
-  CheckDefeatScreen(Score,p);
-  Delay(50);
+                Case Key Of
+                    #75: p:= p*(-1);
+                    #77: p:= p*(-1);
+                end;
+            End;
+            ' ': p:= p*3;
+        end;
+    End;    
+    selectYorN := p;
+    clrscr;
+    CheckDefeatScreen(Score,p);
+    Delay(50);
 end;
-
-
-
 
 ////PARTIE DE Julien
 

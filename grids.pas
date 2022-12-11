@@ -14,24 +14,41 @@ function EmptyGrid(): Grid;
 
 // Retourne True si cette position du bloc qui tombe est valide.
 function CheckCollision(
-    g: Grid;
+    grid: Grid;
     falling_block: Block;   // Structure of the falling block
     x, y: Integer           // Position of the falling block
 ): Boolean;
 procedure test_CheckCollision();
 
-procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; deleted_lines: Integer; current_score: Score; scores: ScoreList);
+// Affiche une grille sur une surface, ainsi que les éléments d'interface sur la droite
+procedure Display(
+    grid: Grid;
+    scr: PSDL_Surface;
+    textures: PTexturesRecord;
+    next_blocks: BlockList;
+    deleted_lines: Integer;
+    current_score: Score;
+    scores: ScoreList
+);
 
+// Fusionne un bloc dans une grille
+function Merge(grid: Grid; block: Block): Grid;
 
-function Merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
+// Vérifie UNE ligne. Renvoie FALSE si la ligne n'est pas complète
+function CheckFullLine(grid: Grid; i: Integer): Boolean;
 
-function CheckFullLine(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
-function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
-function CheckDefeat(grid: Grid): Boolean;  // Vérifie si des blocs ont atteint le plafond
-procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; falling_block: Block; deleted_lines: Integer; current_score: Score; scores: ScoreList);
+// Vérifie si des blocs ont atteint le plafond
+function CheckDefeat(grid: Grid): Boolean;
+
+// Fais clignoter une ligne (prévu pour précéder EraseLine)
+procedure BlinkLine(grid: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; falling_block: Block; deleted_lines: Integer; current_score: Score; scores: ScoreList);
+
+// Suprimme la ligne n de la grille
+function EraseLine(grid: Grid; n: Integer): Grid;
 
 implementation
 
+// Retourne une grille vide
 function EmptyGrid(): Grid;
 var i, j: Integer;
 begin
@@ -40,8 +57,9 @@ begin
             EmptyGrid.tiles[i][j] := 0;
 end;
 
+// Retourne True si cette position du bloc qui tombe est valide.
 function CheckCollision(
-    g: Grid;
+    grid: Grid;
     falling_block: Block;   // Structure of the falling block
     x, y: Integer           // Position of the falling block
 ): Boolean;
@@ -53,12 +71,12 @@ begin
             if falling_block.tiles[tx][ty] <> 0 then
                 if (x + tx < 0) or (x + tx > 9) or (y + ty < 0) or (y + ty > 23) then
                     CheckCollision := False
-                else if g.tiles[x + tx][y + ty] <> 0 then
+                else if grid.tiles[x + tx][y + ty] <> 0 then
                     CheckCollision := False;
 end;
 
-
-procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; deleted_lines: Integer; current_score: Score; scores: ScoreList);
+// Affiche une grille sur une surface, ainsi que les éléments d'interface sur la droite
+procedure Display(grid: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 var rect: TSDL_Rect;
     x, y: Integer;
     texture: ^PSDL_Surface;
@@ -88,7 +106,7 @@ begin
             rect.x := (x+1) * 32;
             rect.y := (y-3) * 32;
 
-            case g.tiles[x][y] of
+            case grid.tiles[x][y] of
                 1 : texture := @textures^.blue_square;
                 2 : texture := @textures^.cyan_square;
                 3 : texture := @textures^.green_square;
@@ -102,10 +120,10 @@ begin
 
             SDL_BlitSurface(texture^, nil, scr, @rect);
         end;
-    
 end;
 
-function Merge(grid: Grid; block: Block): Grid; // Fusionne un bloc dans la grille
+// Fusionne un bloc dans une grille
+function Merge(grid: Grid; block: Block): Grid;
 var x, y: integer;
 begin
     Merge.tiles := grid.tiles;
@@ -115,24 +133,14 @@ begin
                 Merge.tiles[block.x+x][block.y+y]:= block.tiles[x][y];
 end;
 
-function CheckFullLine(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
+// Vérifie UNE ligne. Renvoie FALSE si la ligne n'est pas complète
+function CheckFullLine(grid: Grid; i: Integer): Boolean;
 var j:integer;
 begin
-CheckFullLine := True;
-for j:=0 to 9 do 
-  begin
-  if grid.tiles[j][i] = 0 then CheckFullLine := False;
-  end;
-end;
-
-function EraseLine(n: Integer; grid: Grid): Grid;  //Suprimme la ligne n
-var y, x: Integer;
-begin
-    for y := n downto 1 do
-        for x := 0 to 9 do
-            EraseLine.tiles[x][y] := grid.tiles[x][y-1];
-    for x := 0 to 9 do
-        EraseLine.tiles[x][0] := 0;
+    CheckFullLine := True;
+    for j:=0 to 9 do
+        if grid.tiles[j][i] = 0 then
+            CheckFullLine := False;
 end;
 
 // Vérifie si des blocs ont atteint le plafond
@@ -148,23 +156,35 @@ begin
             end;
 end;
 
-procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; falling_block: Block; deleted_lines: Integer; current_score: Score; scores: ScoreList);
+// Fais clignoter une ligne (prévu pour précéder EraseLine)
+procedure BlinkLine(grid: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; falling_block: Block; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 var x: Integer;
 begin
     for x := 0 to 9 do begin
-        g.tiles[x][line] := 8;
+        grid.tiles[x][line] := 8;
         SDL_FillRect(scr, nil, 0);
-        Display(Merge(g, falling_block), scr, textures, next_blocks, deleted_lines, current_score, scores);
+        Display(Merge(grid, falling_block), scr, textures, next_blocks, deleted_lines, current_score, scores);
         SDL_Flip(scr);
         Delay(16);
     end;
     for x := 0 to 9 do begin
-        g.tiles[x][line] := 0;
+        grid.tiles[x][line] := 0;
         SDL_FillRect(scr, nil, 0);
-        Display(Merge(g, falling_block), scr, textures, next_blocks, deleted_lines, current_score, scores);
+        Display(Merge(grid, falling_block), scr, textures, next_blocks, deleted_lines, current_score, scores);
         SDL_Flip(scr);
         Delay(16);
     end;
+end;
+
+// Suprimme la ligne n de la grille
+function EraseLine(grid: Grid; n: Integer): Grid;
+var y, x: Integer;
+begin
+    for y := n downto 1 do
+        for x := 0 to 9 do
+            EraseLine.tiles[x][y] := grid.tiles[x][y-1];
+    for x := 0 to 9 do
+        EraseLine.tiles[x][0] := 0;
 end;
 
 // ------------------ TESTS ------------------

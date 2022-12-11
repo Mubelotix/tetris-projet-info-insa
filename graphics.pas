@@ -20,7 +20,7 @@ type TexturesRecord = record
 end;
 type PTexturesRecord = ^TexturesRecord;
 
-// Fonction honteusement dérobée depuis l'exemple de l'INSA "jeuGrille"
+// Initialise les textures
 function initTextures(): PTexturesRecord;
 
 // Libère la mémoire allouée pour les textures

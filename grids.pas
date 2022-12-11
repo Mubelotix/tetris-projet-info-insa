@@ -20,7 +20,7 @@ function CheckCollision(
 ): Boolean;
 procedure test_CheckCollision();
 
-procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; Lines, Score, BestScore: Integer);
+procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 
 
 function Merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
@@ -28,7 +28,7 @@ function Merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le 
 function CheckFullLine(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
 function CheckDefeat(grid: Grid): Boolean;  // Vérifie si des blocs ont atteint le plafond
-procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
+procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; falling_block: Block; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 
 implementation
 
@@ -58,7 +58,7 @@ begin
 end;
 
 
-procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; Lines, Score, BestScore: Integer);
+procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 var rect: TSDL_Rect;
     x, y: Integer;
     texture: ^PSDL_Surface;
@@ -71,13 +71,13 @@ begin
     rect.h := 500;
     rect.x := 380+110;
     rect.y := 350-1;
-    text := IntToStr(Lines) +#0;
+    text := IntToStr(deleted_lines) +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
 
     // Affiche le score
     rect.y := 400-1;
-    text := IntToStr(score) +#0;
+    text := IntToStr(current_score.value) +#0;
     textures^.fontface := TTF_RenderText_Blended(textures^.arial, @text[1], textures^.font_color^);
     SDL_BlitSurface(textures^.fontface, nil, scr, @rect);
 
@@ -148,20 +148,20 @@ begin
             end;
 end;
 
-procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
+procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; falling_block: Block; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 var x: Integer;
 begin
     for x := 0 to 9 do begin
         g.tiles[x][line] := 8;
         SDL_FillRect(scr, nil, 0);
-        Display(Merge(g, falling_block), scr, textures, next_blocks, lines, score, BestScore);
+        Display(Merge(g, falling_block), scr, textures, next_blocks, deleted_lines, current_score, scores);
         SDL_Flip(scr);
         Delay(16);
     end;
     for x := 0 to 9 do begin
         g.tiles[x][line] := 0;
         SDL_FillRect(scr, nil, 0);
-        Display(Merge(g, falling_block), scr, textures, next_blocks, lines, score, BestScore);
+        Display(Merge(g, falling_block), scr, textures, next_blocks, deleted_lines, current_score, scores);
         SDL_Flip(scr);
         Delay(16);
     end;

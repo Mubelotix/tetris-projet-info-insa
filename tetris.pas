@@ -6,7 +6,7 @@ var scr: PSDL_Surface; // Surface de dessin principale
 var event: TSDL_Event;
 var textures: PTexturesRecord;
 var iteration, last_key_pressed_iteration: Int64;
-var i, p, BestScore, lines, DeletedLines: Integer;
+var i, p, deleted_lines, newly_deleted_lines: Integer;
 var should_render, in_game: Boolean;
 var main_grid: Grid;
 var falling_block: Block;
@@ -23,7 +23,8 @@ begin
 
     main_grid := EmptyGrid();
     iteration := 10;
-    lines := 0;
+    deleted_lines := 0;
+    newly_deleted_lines := 0;
     current_score.pseudo := pseudo;
     current_score.value := 0;
     last_key_pressed_iteration := 0;
@@ -87,22 +88,22 @@ begin
             in_game := False;
 
         // Vérifie si une ligne est pleine et la detruit si c'est le cas
-        DeletedLines:=0;
+        newly_deleted_lines:=0;
         for i:=3 to 23 do begin
             if CheckFullLine(26-i, main_grid) then begin
-                BlinkLine(main_grid, 26-i, scr, textures, next_blocks, lines, current_score.value, BestScore, falling_block);
+                BlinkLine(main_grid, 26-i, scr, textures, next_blocks, falling_block, deleted_lines, current_score, scores);
                 main_grid := EraseLine(26-i, main_grid);
-                DeletedLines := DeletedLines + 1;
+                newly_deleted_lines := newly_deleted_lines + 1;
                 should_render := True;
             end;
         end;
-        current_score.value := current_score.value + DeletedLines*100;
-        lines := lines + DeletedLines;
+        current_score.value := current_score.value + newly_deleted_lines*100;
+        deleted_lines := deleted_lines + newly_deleted_lines;
 
         // Affiche le jeu si besoin
         if should_render then begin 
             SDL_FillRect(scr, nil, 0);
-            Display(Merge(main_grid, falling_block), scr, textures, next_blocks, lines, current_score.value, BestScore);
+            Display(Merge(main_grid, falling_block), scr, textures, next_blocks, deleted_lines, current_score, scores);
             SDL_Flip(scr);
         end;
 

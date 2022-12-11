@@ -88,24 +88,15 @@ end;
 procedure save_scores(scores: ScoreList);
 var score_data : Text;
     i , n : integer;
-begin 
-	writeln('00');
+begin
     n := scores.length;
-    writeln('01');
     assign(score_data,'scores.txt');
-    writeln('02');
     rewrite(score_data);
-    writeln('03');
     writeln(score_data,scores.length*2);
-    writeln('04');
-    for i:=1 to n do
-        begin
-			writeln('05');
-            writeln(score_data,scores.tab[i-1].pseudo);
-            writeln('06');
-            writeln(score_data,scores.tab[i-1].value);
-            writeln('07');
-        end;
+    for i:=1 to n do begin
+        writeln(score_data,scores.tab[i-1].pseudo);
+        writeln(score_data,scores.tab[i-1].value);
+    end;
     close(score_data);
 end;
 

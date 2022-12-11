@@ -80,7 +80,7 @@ begin
 
         // Vérifie si une ligne est pleine et la detruit si c'est le cas
         newly_deleted_lines:=0;
-        for i:=3 to 23 do begin
+        for i:=23 downto 0 do begin
             if CheckFullLine(main_grid, 26-i) then begin
                 BlinkLine(main_grid, 26-i, scr, textures, next_blocks, falling_block, deleted_lines, current_score, scores);
                 EraseLine(main_grid, 26-i);
@@ -88,7 +88,12 @@ begin
                 should_render := True;
             end;
         end;
-        current_score.value := current_score.value + newly_deleted_lines*100;
+        case newly_deleted_lines of
+            1: current_score.value := current_score.value + 40;
+            2: current_score.value := current_score.value + 100;
+            3: current_score.value := current_score.value + 300;
+            4: current_score.value := current_score.value + 1200;
+        end;
         deleted_lines := deleted_lines + newly_deleted_lines;
 
         // Affiche le jeu si besoin

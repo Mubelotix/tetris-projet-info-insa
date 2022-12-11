@@ -21,15 +21,7 @@ function CheckCollision(
 procedure test_CheckCollision();
 
 // Affiche une grille sur une surface, ainsi que les éléments d'interface sur la droite
-procedure Display(
-    grid: Grid;
-    scr: PSDL_Surface;
-    textures: PTexturesRecord;
-    next_blocks: BlockList;
-    deleted_lines: Integer;
-    current_score: Score;
-    scores: ScoreList
-);
+procedure Display(grid: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; deleted_lines: Integer; current_score: Score; scores: ScoreList);
 
 // Fusionne un bloc dans une grille
 function Merge(grid: Grid; block: Block): Grid;

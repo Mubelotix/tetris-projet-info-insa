@@ -28,7 +28,6 @@ implementation
 procedure CheckDefeatScreen(score, p: Integer; scr: PSDL_Surface; textures: PTexturesRecord);
 var 
 	rect: TSDL_Rect;
-	texture: ^PSDL_Surface;
 	text: String;
 begin
     rect.w := 500;
@@ -60,14 +59,14 @@ begin
             p:= p * (-1);
         if (event.key.keysym.sym = SDLK_SPACE) then
             p := p*3;
-        Delay(150);
     end;
+    while (SDL_PollEvent(@event) > 0) do begin end; // vider la file d'evenements
 
     selectYorN := p;
     clrscr;
     CheckDefeatScreen(Score,p,scr,textures);
     SDL_Flip(scr);
-    Delay(50);
+    Delay(100);
 end;
 
 // Affiche l'écran d'accueil
@@ -79,7 +78,7 @@ begin
 	else if g = -1 then
 		SDL_BlitSurface(textures^.scores, nil, scr, nil);
 	SDL_Flip(scr);
-    Delay(10);
+    Delay(16);
 end;
 
 // Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
@@ -93,11 +92,12 @@ begin
 	    if (event.key.keysym.sym = SDLK_SPACE) then
             g := g*3;
     end;
+    while (SDL_PollEvent(@event) > 0) do begin end; // vider la file d'evenements
     
     selectYorN2 := g;
     clrscr;
     MainScreen(g,scr,textures);
-    Delay(150);
+    Delay(100);
 end;
 
 // Demande le pseudo

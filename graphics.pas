@@ -29,6 +29,9 @@ function get_block(textures: PTexturesRecord; color: integer): PSDL_Surface;
 // Libère la mémoire allouée pour les textures
 procedure freeTextures(textures: PTexturesRecord);
 
+
+
+
 implementation
 
 // Initialise les textures

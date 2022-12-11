@@ -26,8 +26,10 @@ function NewFallingBlock(): Block;
 // Renouvelle le bloc qui tombe à partir du premier dans la liste des prochains et complète cette liste
 procedure UpdateNextBlocks(var falling_block: Block; var next_blocks: BlockList);
 
-implementation
 
+
+
+implementation
 
 function load_blocks(): BlockList;
 var f: Text;
@@ -101,6 +103,9 @@ begin
     NewFallingBlock.x := 3;
     NewFallingBlock.y := 0;
 end;
+
+
+
 
 // ------------------ TESTS ------------------
 // 

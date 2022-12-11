@@ -2,6 +2,9 @@ program tests;
 {$MODE OBJFPC}
 uses blocks, grids, scores, sysutils, crt;
 
+// Ce fichier contient le runner pour les tests unitaires.
+// Ce code n'est pas exécuté par le jeu, seulement pas la CI.
+
 type TestRecord = record
     addr: procedure;
     id: String;

@@ -38,6 +38,9 @@ procedure BlinkLine(grid: Grid; line: Integer; scr: PSDL_Surface; textures: PTex
 // Suprimme la ligne n de la grille
 procedure EraseLine(var grid: Grid; n: Integer);
 
+
+
+
 implementation
 
 // Retourne une grille vide
@@ -178,13 +181,15 @@ begin
         grid.tiles[x][0] := 0;
 end;
 
+
+
+
 // ------------------ TESTS ------------------
 // 
 // Tous le code qui suit est utilisé dans les tests unitaires.
 // Il n'est pas exécuté dans le jeu.
 //
 // -------------------------------------------
-
 
 procedure test_CheckCollision();
 var line: Block;

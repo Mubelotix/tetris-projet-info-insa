@@ -19,6 +19,9 @@ procedure MainScreen(g:Integer);
 // Demande le pseudo
 function askName(): string;
 
+
+
+
 implementation
 
 // Affiche l'écran de defaite

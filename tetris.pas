@@ -2,7 +2,7 @@ program tetris;
 uses blocks, grids, crt, menu, scores, graphics, music, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
 // Fait jouer l'utilisateur et retourne son score
-function gameLoop(pseudo: String; scores: ScoreList;scr: PSDL_Surface; event: TSDL_Event;textures: PTexturesRecord): Score;
+function gameLoop(pseudo: String; scores: ScoreList;scr: PSDL_Surface; textures: PTexturesRecord): Score;
 var 
     iteration, last_key_pressed_iteration: Int64;
     i, deleted_lines, newly_deleted_lines: Integer;
@@ -10,6 +10,7 @@ var
     main_grid: Grid;
     falling_block: Block;
     next_blocks: BlockList;
+    event: TSDL_Event;
     current_score: Score;
     sound: pMIX_MUSIC;
 begin
@@ -129,10 +130,9 @@ end;
 var score_list: ScoreList;
     new_score: Score;
     Key: char;
-    p, i: Integer;
+    p: Integer;
     pseudo: String;
     scr: PSDL_Surface;
-    event: TSDL_Event;
     textures: PTexturesRecord;
 begin
     pseudo := 'Unknown';
@@ -154,7 +154,7 @@ begin
 
     case p of
 		3: while True do begin
-            new_score := gameLoop(pseudo, score_list,scr, event, textures);
+            new_score := gameLoop(pseudo, score_list,scr, textures);
             insert_score(score_list, new_score);
             
             save_scores(score_list);

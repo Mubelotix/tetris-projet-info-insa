@@ -129,6 +129,8 @@ var score_list: ScoreList;
     event: TSDL_Event;
     textures: PTexturesRecord;
 begin
+    pseudo := askName();
+    
     textures := initTextures();
     SDL_Init(SDL_INIT_VIDEO);
     scr := SDL_SetVideoMode(12*32+250, 22*32, 8, SDL_SWSURFACE);
@@ -139,7 +141,6 @@ begin
     score_list := load_scores();
     sort_scores(score_list);
     key := ' ';
-    pseudo := '';
     p:=1;
 
     while ((p=1) or (p =(-1))) do p := selectYorN2(Key,p,scr,textures);

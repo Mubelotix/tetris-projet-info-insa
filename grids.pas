@@ -10,55 +10,55 @@ type Grid = record
 end;
 
 // Retourne une grille vide
-function empty_grid(): Grid;
+function EmptyGrid(): Grid;
 
 // Retourne True si cette position du bloc qui tombe est valide.
-function test_collision(
+function CheckCollision(
     g: Grid;
     falling_block: Block;   // Structure of the falling block
     x, y: Integer           // Position of the falling block
 ): Boolean;
-procedure test_test_collision();
+procedure test_CheckCollision();
 
-procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
+procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
 
 
-function merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
+function Merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
 
-function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
+function CheckFullLine(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
-function Defeat(grid: Grid): Boolean;  // Vérifie si des blocs ont atteint le plafond
-procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
+function CheckDefeat(grid: Grid): Boolean;  // Vérifie si des blocs ont atteint le plafond
+procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 
 implementation
 
-function empty_grid(): Grid;
+function EmptyGrid(): Grid;
 var i, j: Integer;
 begin
     for i := 0 to 9 do
         for j := 0 to 23 do
-            empty_grid.tiles[i][j] := 0;
+            EmptyGrid.tiles[i][j] := 0;
 end;
 
-function test_collision(
+function CheckCollision(
     g: Grid;
     falling_block: Block;   // Structure of the falling block
     x, y: Integer           // Position of the falling block
 ): Boolean;
 var tx, ty: Integer;
 begin
-    test_collision := True;
+    CheckCollision := True;
     for tx := 0 to 3 do
         for ty := 0 to 3 do
             if falling_block.tiles[tx][ty] <> 0 then
                 if (x + tx < 0) or (x + tx > 9) or (y + ty < 0) or (y + ty > 23) then
-                    test_collision := False
+                    CheckCollision := False
                 else if g.tiles[x + tx][y + ty] <> 0 then
-                    test_collision := False;
+                    CheckCollision := False;
 end;
 
 
-procedure displaySDL(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
+procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
 var rect: TSDL_Rect;
     x, y: Integer;
     texture: ^PSDL_Surface;
@@ -105,23 +105,23 @@ begin
     
 end;
 
-function merge(grid: Grid; block: Block): Grid; // Fusionne un bloc dans la grille
+function Merge(grid: Grid; block: Block): Grid; // Fusionne un bloc dans la grille
 var x, y: integer;
 begin
-    merge.tiles := grid.tiles;
+    Merge.tiles := grid.tiles;
     for x:=0 to 3 do
         for y:=0 to 3 do
             if block.tiles[x][y] <> 0 then
-                merge.tiles[block.x+x][block.y+y]:= block.tiles[x][y];
+                Merge.tiles[block.x+x][block.y+y]:= block.tiles[x][y];
 end;
 
-function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
+function CheckFullLine(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 var j:integer;
 begin
-FullLineVerification := True;
+CheckFullLine := True;
 for j:=0 to 9 do 
   begin
-  if grid.tiles[j][i] = 0 then FullLineVerification := False;
+  if grid.tiles[j][i] = 0 then CheckFullLine := False;
   end;
 end;
 
@@ -136,32 +136,32 @@ begin
 end;
 
 // Vérifie si des blocs ont atteint le plafond
-function Defeat(grid: Grid):Boolean;
+function CheckDefeat(grid: Grid):Boolean;
 var x, y: Integer;
 begin
-    Defeat := False;
+    CheckDefeat := False;
     for x:=0 to 9 do
         for y:=0 to 3 do
             if grid.tiles[x][y] <> 0 then begin
-                Defeat := True;
+                CheckDefeat := True;
                 break;
             end;
 end;
 
-procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
+procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 var x: Integer;
 begin
     for x := 0 to 9 do begin
         g.tiles[x][line] := 8;
         SDL_FillRect(scr, nil, 0);
-        displaySDL(merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
+        Display(Merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
         SDL_Flip(scr);
         Delay(16);
     end;
     for x := 0 to 9 do begin
         g.tiles[x][line] := 0;
         SDL_FillRect(scr, nil, 0);
-        displaySDL(merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
+        Display(Merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
         SDL_Flip(scr);
         Delay(16);
     end;
@@ -175,34 +175,34 @@ end;
 // -------------------------------------------
 
 
-procedure test_test_collision();
+procedure test_CheckCollision();
 var line: Block;
     g: Grid;
 begin
     line.tiles := load_blocks()[0].tiles;
-    g := empty_grid();
+    g := EmptyGrid();
 
     // Test a trivially valid position
-    if not(test_collision(g, line, 2, 2)) then
+    if not(CheckCollision(g, line, 2, 2)) then
         raise Exception.Create('Single line at center of grid should be valid');
 
     // Test trivially invalid positions
-    if test_collision(g, line, -2, 2) then
+    if CheckCollision(g, line, -2, 2) then
         raise Exception.Create('Single line overflowing left should be invalid');
-    if test_collision(g, line, 10, 2) then
+    if CheckCollision(g, line, 10, 2) then
         raise Exception.Create('Single line overflowing right should be invalid');
-    if test_collision(g, line, 2, -1) then
+    if CheckCollision(g, line, 2, -1) then
         raise Exception.Create('Single line overflowing top should be invalid');
-    if test_collision(g, line, 2, 21) then
+    if CheckCollision(g, line, 2, 21) then
         raise Exception.Create('Single line overflowing bottom should be invalid');
 
     // Test a position overlapping a tile on the grid
     g.tiles[2][2] := 1;
-    if test_collision(g, line, 1, 2) then
+    if CheckCollision(g, line, 1, 2) then
         raise Exception.Create('Single line overlapping a tile should be invalid');
 
     // Test a non overlapping position
-    if not(test_collision(g, line, 2, 2)) then
+    if not(CheckCollision(g, line, 2, 2)) then
         raise Exception.Create('Single line not overlapping a tile should be valid');
 end;
 

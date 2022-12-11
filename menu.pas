@@ -4,7 +4,7 @@ interface
 
 uses crt, grids, blocks, scores;
 
-procedure defeatScreen(score, p:Integer); // Ecran de defaite
+procedure CheckDefeatScreen(score, p:Integer); // Ecran de defaite
 function selectYorN(Key:Char ; Score, p:integer): integer;   ///Renvoie p. Si p=1 c'est Oui sinon c'est non
 function selectYorN2(Key:Char ; g:integer): integer;   ///Renvoie g. Si g=1 c'est Jouer sinon c'est Classement
 procedure MainScreen(g:Integer);
@@ -12,7 +12,7 @@ function askName(): string;
 
 implementation
 	
-procedure defeatScreen(score, p:Integer); // Ecran de defaite
+procedure CheckDefeatScreen(score, p:Integer); // Ecran de defaite
 var i,j: integer;
 
 begin
@@ -97,7 +97,7 @@ if KeyPressed = True then
   End;    
   selectYorN := p;
   clrscr;
-  defeatScreen(Score,p);
+  CheckDefeatScreen(Score,p);
   Delay(50);
 end;
 

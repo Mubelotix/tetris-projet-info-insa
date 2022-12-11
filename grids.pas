@@ -20,7 +20,7 @@ function CheckCollision(
 ): Boolean;
 procedure test_CheckCollision();
 
-procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
+procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; Lines, Score, BestScore: Integer);
 
 
 function Merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le bloc tombant
@@ -28,7 +28,7 @@ function Merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le 
 function CheckFullLine(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
 function CheckDefeat(grid: Grid): Boolean;  // Vérifie si des blocs ont atteint le plafond
-procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
+procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 
 implementation
 
@@ -58,7 +58,7 @@ begin
 end;
 
 
-procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; Lines, Score, BestScore: Integer);
+procedure Display(g: Grid; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; Lines, Score, BestScore: Integer);
 var rect: TSDL_Rect;
     x, y: Integer;
     texture: ^PSDL_Surface;
@@ -148,20 +148,20 @@ begin
             end;
 end;
 
-procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
+procedure BlinkLine(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; next_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 var x: Integer;
 begin
     for x := 0 to 9 do begin
         g.tiles[x][line] := 8;
         SDL_FillRect(scr, nil, 0);
-        Display(Merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
+        Display(Merge(g, falling_block), scr, textures, next_blocks, lines, score, BestScore);
         SDL_Flip(scr);
         Delay(16);
     end;
     for x := 0 to 9 do begin
         g.tiles[x][line] := 0;
         SDL_FillRect(scr, nil, 0);
-        Display(Merge(g, falling_block), scr, textures, falling_blocks, lines, score, BestScore);
+        Display(Merge(g, falling_block), scr, textures, next_blocks, lines, score, BestScore);
         SDL_Flip(scr);
         Delay(16);
     end;

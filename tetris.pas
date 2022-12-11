@@ -2,7 +2,7 @@ program tetris;
 uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
 
-var block_list, falling_blocks: BlockList;
+var block_list, next_blocks: BlockList;
 var i, x, y, p, g, BestScore, DeletedLines: Integer;
 var MainGrid: Grid;
 var falling_block: Block;
@@ -10,15 +10,14 @@ var ListOfScores: ScoreList;
 var ActualScore : Score;
 var Key: char;
 
-procedure updateFallingBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
+procedure UpdateNextBlocks(); //Quand un bloc est fixe, en spawn un autre et update la liste des prochains blocs
 var i: integer;
 begin
-    falling_block := falling_blocks[0];  // Le prochain bloc qui spawn est le premier sur la liste
+    falling_block := next_blocks[0];  // Le prochain bloc qui spawn est le premier sur la liste
     for i:=0 to 5 do   
-        falling_blocks[i]:= falling_blocks[i+1]; // Translation a droite de tous les blocs
-    falling_blocks[6] := NewFallingBlock();
+        next_blocks[i]:= next_blocks[i+1]; // Translation a droite de tous les blocs
+    next_blocks[6] := NewFallingBlock();
 end;
-
 
 procedure gameLoop(passMainMenu:integer);
 var scr: PSDL_Surface; // Surface de dessin principale
@@ -42,8 +41,8 @@ begin
     last_key_pressed_iteration := 0;
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
-    for i:=0 to 6 do falling_blocks[i] := NewFallingBlock();
-    updateFallingBlocks();
+    for i:=0 to 6 do next_blocks[i] := NewFallingBlock();
+    UpdateNextBlocks();
 
     in_game := True;
     
@@ -59,7 +58,7 @@ begin
             end;
         end else begin //Sinon la Grille fixe le bloc tombant dans sa structure
             MainGrid := (Merge(MainGrid, falling_block));
-            updateFallingBlocks();
+            UpdateNextBlocks();
             should_render := True;
         end;
 
@@ -103,7 +102,7 @@ begin
         DeletedLines:=0;
         for i:=3 to 23 do begin
             if CheckFullLine(26-i, MainGrid) then begin
-                BlinkLine(MainGrid, 26-i, scr, textures, falling_blocks, lines, ActualScore.value, BestScore, falling_block);
+                BlinkLine(MainGrid, 26-i, scr, textures, next_blocks, lines, ActualScore.value, BestScore, falling_block);
                 MainGrid := EraseLine(26-i, MainGrid);
                 DeletedLines := DeletedLines + 1;
                 should_render := True;
@@ -115,7 +114,7 @@ begin
         // Affiche le jeu si besoin
         if should_render then begin 
             SDL_FillRect(scr, nil, 0);
-            Display(Merge(MainGrid, falling_block), scr, textures, falling_blocks, lines, ActualScore.value, BestScore);
+            Display(Merge(MainGrid, falling_block), scr, textures, next_blocks, lines, ActualScore.value, BestScore);
             SDL_Flip(scr);
         end;
 

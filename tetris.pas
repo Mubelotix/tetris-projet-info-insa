@@ -1,17 +1,16 @@
 program tetris;
 uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
-procedure gameLoop(passMainMenu:integer);
+procedure gameLoop(passMainMenu: Integer; pseudo: String);
 var scr: PSDL_Surface; // Surface de dessin principale
 var event: TSDL_Event;
 var textures: PTexturesRecord;
-var rect: TSDL_RECT;
 var iteration, last_key_pressed_iteration: Int64;
 var should_render: Boolean;
 var lines: Integer;
 var in_game: Boolean; //Si TRUE, le jeu est en cours
-var block_list, next_blocks: BlockList;
-var i, x, y, p, g, BestScore, DeletedLines: Integer;
+var next_blocks: BlockList;
+var i, p, BestScore, DeletedLines: Integer;
 var main_grid: Grid;
 var falling_block: Block;
 var scores: ScoreList;
@@ -27,6 +26,8 @@ begin
     main_grid := EmptyGrid();
     iteration := 10;
     lines := 0;
+    current_score.pseudo := pseudo;
+    current_score.value := 0;
     last_key_pressed_iteration := 0;
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
@@ -54,8 +55,8 @@ begin
         // Lire les events
         SDL_PollEvent(@event);
         
-        // Regarde si une touche a été pressée en évitant de se déclencher trop rapidement (10 itérations)
-        if (event.type_ = SDL_KEYDOWN) and (last_key_pressed_iteration + 10 < iteration) then begin
+        // Regarde si une touche a été pressée en évitant de se déclencher trop rapidement (7 itérations)
+        if (event.type_ = SDL_KEYDOWN) and (last_key_pressed_iteration + 7 < iteration) then begin
             last_key_pressed_iteration := iteration;
             if event.key.keysym.sym = SDLK_RIGHT then begin
                 if CheckCollision(main_grid, falling_block, falling_block.x+1, falling_block.y) = True then begin
@@ -124,8 +125,8 @@ begin
     p:=1;                                                 
     while ((p=1) or (p =(-1)) ) do p := selectYorN(Key, current_score.value, p);
    
-    if p=3 then gameloop(3);
-    if p = -3 then gameloop(1);
+    if p=3 then gameloop(3, pseudo);
+    if p = -3 then gameloop(1, pseudo);
     
 end;
 
@@ -136,5 +137,5 @@ end;
 
 
 begin
-    gameLoop(1);
+    gameLoop(1, '');
 end.

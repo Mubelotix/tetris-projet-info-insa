@@ -28,7 +28,7 @@ function merge(grid:Grid; block:Block): Grid; //Fais un clone de la grille + le 
 
 function FullLineVerification(i:integer; grid:Grid): Boolean; //Verifie UNE ligne. Renvoie FALSE si la ligne n'est pas complete
 function EraseLine(n:integer; grid:Grid):Grid;  //Suprimme la ligne n
-function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
+function Defeat(grid: Grid): Boolean;  // Vérifie si des blocs ont atteint le plafond
 procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; falling_blocks: BlockList; ActualScore: Score );
 procedure ClignotementSDL(g: Grid; line: Integer; scr: PSDL_Surface; textures: PTexturesRecord; falling_blocks: BlockList; lines, score, BestScore: Integer; falling_block:block);
 
@@ -254,16 +254,21 @@ begin
     for y := n downto 1 do
         for x := 0 to 9 do
             EraseLine.tiles[x][y] := grid.tiles[x][y-1];
+    for x := 0 to 9 do
+        EraseLine.tiles[x][0] := 0;
 end;
 
-function Defeat(grid:Grid):Boolean;  //Verifie si la premiere ligne  contient un bloc, si oui = TRUE et signifie la defaite
-var k:integer;
+// Vérifie si des blocs ont atteint le plafond
+function Defeat(grid: Grid):Boolean;
+var x, y: Integer;
 begin
-Defeat := False;
-for k:=0 to 9 do
-  begin
-    if grid.tiles[k][3] <> 0 then Defeat := True;
-  end;
+    Defeat := False;
+    for x:=0 to 9 do
+        for y:=0 to 3 do
+            if grid.tiles[x][y] <> 0 then begin
+                Defeat := True;
+                break;
+            end;
 end;
 
 procedure Clignotement(n, BestScore :integer; MainGrid: Grid; falling_block:Block; falling_blocks: BlockList; ActualScore: Score );

@@ -1,25 +1,6 @@
 program tetris;
 uses blocks, grids, crt, menu, scores, graphics, sdl, sdl_image, SDL_MIXER, SDL_TTF;
 
-
-var block_list, next_blocks: BlockList;
-var i, x, y, p, g, BestScore, DeletedLines: Integer;
-var MainGrid: Grid;
-var falling_block: Block;
-var ListOfScores: ScoreList;
-var ActualScore : Score;
-var Key: char;
-
-// Renouvelle le bloc qui tombe à partir du premier dans la liste des prochains et complète cette liste
-procedure UpdateNextBlocks();
-var i: integer;
-begin
-    falling_block := next_blocks[0];  // Le prochain bloc qui spawn est le premier sur la liste
-    for i:=0 to 5 do   
-        next_blocks[i]:= next_blocks[i+1]; // Translation a droite de tous les blocs
-    next_blocks[6] := NewFallingBlock();
-end;
-
 procedure gameLoop(passMainMenu:integer);
 var scr: PSDL_Surface; // Surface de dessin principale
 var event: TSDL_Event;
@@ -29,6 +10,13 @@ var iteration, last_key_pressed_iteration: Int64;
 var should_render: Boolean;
 var lines: Integer;
 var in_game: Boolean; //Si TRUE, le jeu est en cours
+var block_list, next_blocks: BlockList;
+var i, x, y, p, g, BestScore, DeletedLines: Integer;
+var MainGrid: Grid;
+var falling_block: Block;
+var ListOfScores: ScoreList;
+var ActualScore : Score;
+var Key: char;
 begin
     textures := initTextures();
     SDL_Init(SDL_INIT_VIDEO);
@@ -43,7 +31,7 @@ begin
 
     // Initialisation de la liste des 7 premiers blocs qui tomberont
     for i:=0 to 6 do next_blocks[i] := NewFallingBlock();
-    UpdateNextBlocks();
+    UpdateNextBlocks(falling_block, next_blocks);
 
     in_game := True;
     
@@ -59,7 +47,7 @@ begin
             end;
         end else begin //Sinon la Grille fixe le bloc tombant dans sa structure
             MainGrid := (Merge(MainGrid, falling_block));
-            UpdateNextBlocks();
+            UpdateNextBlocks(falling_block, next_blocks);
             should_render := True;
         end;
 

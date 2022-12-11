@@ -21,8 +21,11 @@ procedure test_load_blocks();
 function rotate_block(b: Block; direction: Boolean { True si sens horaire, False si trigonométrique }): Block; 
 procedure test_rotate_block();
 
-function NewFallingBlock():Block; //Prend un bloc random et le met dans la grille
+// Retourne un bloc random
+function NewFallingBlock(): Block;
 
+// Renouvelle le bloc qui tombe à partir du premier dans la liste des prochains et complète cette liste
+procedure UpdateNextBlocks(var falling_block: Block; var next_blocks: BlockList);
 
 implementation
 
@@ -81,6 +84,23 @@ begin
     rotate_block.y := b.y;
     rotate_block.tiles := new_b.tiles;
 end;
+
+// Renouvelle le bloc qui tombe à partir du premier dans la liste des prochains et complète cette liste
+procedure UpdateNextBlocks(var falling_block: Block; var next_blocks: BlockList);
+var i: integer;
+begin
+    falling_block := next_blocks[0];  // Le prochain bloc qui spawn est le premier sur la liste
+    for i:=0 to 5 do   
+        next_blocks[i]:= next_blocks[i+1]; // Translation a droite de tous les blocs
+    next_blocks[6] := NewFallingBlock();
+end;
+
+// ------------------ TESTS ------------------
+// 
+// Tous le code qui suit est utilisé dans les tests unitaires.
+// Il n'est pas exécuté dans le jeu.
+//
+// -------------------------------------------
 
 procedure test_rotate_block();
 var b: Block;

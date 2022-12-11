@@ -12,54 +12,51 @@ function askName(): string;
 
 implementation
 	
-procedure CheckDefeatScreen(score, p:Integer); // Ecran de defaite
-var i,j: integer;
-
+procedure CheckDefeatScreen(score, p: Integer); // Ecran de defaite
+var i, j: Integer;
 begin
-writeln();
-writeln();
-writeln();
-                                        //plafond
-  write('┌');
-  for i:=0 to 23 do write('─');
-  write('┐');
-  
-                                        //contenu
- for j:=1 to 10 do
- begin   
-                                        //Grille en elle-meme
- writeln();
- write('│');
-   if  j = 3 then begin
-   write('      Score:  ', Score);
-   if Score = 0 then write ('         ') else for i:=1 to 9 - Round(ln(Score)/ln(10)) do write(' '); ///Ajuster le | selon la taille du score
-   write('│');
-   end
+    writeln();
+    writeln();
+    writeln();
     
-   else if j = 5  then write('Voulez-Vous recommencer?│')
-   else if j = 7  then 
-        begin
-         if p=1 then write('    > Oui        Non    │');
-        if p=-1 then write('      Oui      > Non    │');
-        end
-   else 
-   begin
-    for i:=0 to 11 do
-     begin
-     write('  ')
-     end;
-     write('│');
-     end;
+    // plafond
+    write('┌');
+    for i:=0 to 23 do write('─');
+    write('┐');
     
-end;
-
-         
-                                        //sol
-writeln();
-write('└');
-for i:=0 to 23 do write('─');
-write('┘');
-
+    // contenu
+    for j:=1 to 10 do begin   
+        //Grille en elle-meme
+        writeln();
+        write('│');
+        if  j = 3 then begin
+            write('      Score:  ', Score);
+            if Score = 0 then
+                write ('         ')
+            else
+                for i:=1 to 9 - Round(ln(Score)/ln(10)) do
+                    write(' '); ///Ajuster le | selon la taille du score
+            write('│');
+        end else if j = 5 then
+            write('Voulez-Vous recommencer?│')
+        else if j = 7 then begin
+            if p=1 then
+                write('    > Oui        Non    │');
+            if p=-1 then
+                write('      Oui      > Non    │');
+        end else begin
+            for i:=0 to 11 do
+                write('  ');
+            write('│');
+        end;
+    end;
+    
+    //sol
+    writeln();
+    write('└');
+    for i:=0 to 23 do
+        write('─');
+    write('┘');
 end;
 
 
